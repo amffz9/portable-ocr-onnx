@@ -315,6 +315,8 @@ Build options (environment variables for `pip install -e .`):
 - `NEMOTRON_OCR_NO_OPENMP=1`: build without OpenMP.
 - `NEMOTRON_OCR_LIBOMP_PREFIX`: libomp location on macOS.
 - `BUILD_CPP_FORCE=1`: force a rebuild.
+- `NEMOTRON_OCR_AVX2=0` / `1`: override AVX2 detection (default: on if the build
+  machine's CPU has AVX2).
 
 ### Repository layout
 

@@ -10,6 +10,7 @@ import os
 import platform
 import sys
 import shutil
+import subprocess
 from glob import glob
 
 from pathlib import Path
@@ -133,9 +134,30 @@ gcc_args = omp_compile + (["-DOMP_NESTED=true"] if omp_compile else [])
 cuda_args = []
 link_args = list(omp_link)
 
+def _host_has_avx2() -> bool:
+    """True if the build machine's CPU has AVX2 (unknown counts as yes, as upstream)."""
+    try:
+        if sys.platform.startswith("linux"):
+            with open("/proc/cpuinfo") as f:
+                return " avx2" in f.read()
+        if sys.platform == "darwin":
+            out = subprocess.run(["sysctl", "-n", "machdep.cpu.leaf7_features"],
+                                 capture_output=True, text=True).stdout
+            return "AVX2" in out.upper()
+    except OSError:
+        pass
+    return True
+
+
 _target_arch = os.environ.get("ARCH", "").lower() or platform.machine().lower()
-if _target_arch in ("x86_64", "amd64"):
+# -mavx2 only where the CPU has it (pre-Haswell Xeons such as E5 v1/v2 don't).
+# NEMOTRON_OCR_AVX2=0/1 overrides, e.g. when building for a different machine.
+_avx2_env = os.environ.get("NEMOTRON_OCR_AVX2")
+_use_avx2 = _avx2_env != "0" if _avx2_env is not None else _host_has_avx2()
+if _target_arch in ("x86_64", "amd64") and _use_avx2:
     gcc_args += ["-mavx2"]
+elif _target_arch in ("x86_64", "amd64"):
+    print("build-extension: building without -mavx2 (CPU has no AVX2)")
 
 files = sorted(glob("cpp/**/*.cpp", recursive=True))
 if WITH_CUDA:

@@ -136,6 +136,28 @@ python scripts/validate.py --providers cpu
 Reference numbers (4 vCPU x86-64, 1024 px): English 1.7 s/page, multilingual 1.9 s/page,
 ~3 GB peak RSS.
 
+### Older and dual-socket Xeons (e.g. E5 v1–v4)
+
+- **AVX2.** The C++ helpers are built with `-mavx2` only if the CPU you build on
+  has AVX2. E5 v3/v4 (Haswell/Broadwell) have it; E5 v1/v2 (Sandy/Ivy Bridge) don't.
+  Build on the machine that will run it, or set `NEMOTRON_OCR_AVX2=0` when building
+  elsewhere for an AVX-only CPU. If `validate.py` dies with "Illegal instruction",
+  report which package it came from.
+- **Two sockets.** Threads spread across both sockets fight over memory traffic
+  between them, which costs speed. Pin each OCR process to one socket and give it
+  that socket's physical cores, e.g. for 8-core CPUs:
+
+  ```bash
+  numactl --cpunodebind=0 --membind=0 python scripts/validate.py --threads 8
+  ```
+
+  For throughput, run one worker process per socket (the second on node 1)
+  instead of one process using every core. Install `numactl` from your
+  distribution's packages; `lscpu` shows the cores per socket.
+- **No VNNI or AVX-512.** These CPUs predate VNNI, so INT8 quantization gains
+  little or nothing on them. If the server has a GPU with spare memory, the CUDA
+  provider in FP32 is the faster route.
+
 ## NVIDIA Tesla P40 (Pascal) — CUDA provider, FP32
 
 The P40 (compute capability 6.1) has no fast FP16, so FP32 is the right choice
