@@ -159,8 +159,9 @@ def quad_all_2_all_distance(
     d2 = _vertex_to_edge_sq_dist(quads)
     dist = torch.sqrt(torch.minimum(d2, d2.transpose(0, 1)))
 
-    n = quads.shape[0]
-    eye = torch.eye(n, dtype=torch.bool, device=quads.device)
+    # arange comparison rather than torch.eye(dtype=bool): ONNX Runtime has no bool EyeLike
+    idx = torch.arange(quads.shape[0], device=quads.device)
+    eye = idx[:, None] == idx[None, :]
     diag_val = 0.0 if allow_self_distance else float("inf")
     return torch.where(eye, torch.full_like(dist, diag_val), dist)
 
