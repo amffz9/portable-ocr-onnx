@@ -136,27 +136,56 @@ python scripts/validate.py --providers cpu
 Reference numbers (4 vCPU x86-64, 1024 px): English 1.7 s/page, multilingual 1.9 s/page,
 ~3 GB peak RSS.
 
-### Older and dual-socket Xeons (e.g. E5 v1–v4)
+### Tuning for your CPU
 
-- **AVX2.** The C++ helpers are built with `-mavx2` only if the CPU you build on
-  has AVX2. E5 v3/v4 (Haswell/Broadwell) have it; E5 v1/v2 (Sandy/Ivy Bridge) don't.
-  Build on the machine that will run it, or set `NEMOTRON_OCR_AVX2=0` when building
-  elsewhere for an AVX-only CPU. If `validate.py` dies with "Illegal instruction",
-  report which package it came from.
-- **Two sockets.** Threads spread across both sockets fight over memory traffic
-  between them, which costs speed. Pin each OCR process to one socket and give it
-  that socket's physical cores, e.g. for 8-core CPUs:
+Check what your CPU supports first. On Linux:
 
-  ```bash
-  numactl --cpunodebind=0 --membind=0 python scripts/validate.py --threads 8
-  ```
+```bash
+lscpu | grep -E 'Model name|Socket|Core\(s\) per socket|NUMA node\(s\)'
+grep -o -w -E 'avx2|avx512f|avx512_vnni|avx_vnni|amx_int8|asimddp|i8mm' /proc/cpuinfo | sort -u
+```
 
-  For throughput, run one worker process per socket (the second on node 1)
-  instead of one process using every core. Install `numactl` from your
-  distribution's packages; `lscpu` shows the cores per socket.
-- **No VNNI or AVX-512.** These CPUs predate VNNI, so INT8 quantization gains
-  little or nothing on them. If the server has a GPU with spare memory, the CUDA
-  provider in FP32 is the faster route.
+On macOS, `sysctl -a | grep machdep.cpu` (Intel) or `sysctl hw.optional` (Apple
+Silicon) gives the same information.
+
+**Instruction sets.**
+
+| CPU feature | What it affects |
+|---|---|
+| AVX2 (x86) | The C++ helpers are compiled with `-mavx2` only when the build machine has AVX2. Some older x86 CPUs don't. ONNX Runtime and PyTorch pick their own code paths at run time. |
+| AVX-512, AVX-512 VNNI, AVX-VNNI, AMX (x86) | Faster FP32 in ONNX Runtime (AVX-512), and fast INT8 (VNNI/AMX). Without VNNI, INT8 models gain little or can be slower than FP32. |
+| NEON dot product (`asimddp`), `i8mm` (ARM) | Fast INT8 on ARM; most recent ARM server and Apple chips have them. |
+
+**Build options.** Build on the machine that will run it, so the AVX2 check sees the
+right CPU. To build for a different machine:
+
+- `NEMOTRON_OCR_AVX2=0` builds without AVX2 for a target that lacks it;
+- `NEMOTRON_OCR_AVX2=1` forces AVX2 on.
+
+If `validate.py` stops with "Illegal instruction", the build used instructions the
+CPU doesn't have. Rebuild with `NEMOTRON_OCR_AVX2=0 BUILD_CPP_FORCE=1 pip install
+--no-build-isolation -e .`. If it still happens, the fault is in a dependency
+wheel; report which one.
+
+**Threads.** `--threads N` (CLI) or `intra_op_threads=N` (Python) sets ONNX
+Runtime's thread count. Use physical cores, not hyper-threads. On a shared server,
+leave cores free for other services.
+
+**Multi-socket servers.** If `lscpu` shows more than one NUMA node, threads spread
+across sockets slow each other down: memory traffic between the sockets costs
+speed. Pin each OCR process to one node and give it that node's physical cores:
+
+```bash
+numactl --cpunodebind=0 --membind=0 python scripts/validate.py --threads <cores per socket>
+```
+
+For throughput, run one worker process per node (`--cpunodebind=1 --membind=1` for
+the second, and so on) instead of one process using every core. `numactl` is in
+most distributions' package repositories.
+
+**Batching.** On CPU the detector runs one page at a time by default
+(`detector_max_batch_size=1`). Larger batches used much more memory and weren't
+faster in testing. Use several processes for parallel pages instead.
 
 ## NVIDIA Tesla P40 (Pascal) — CUDA provider, FP32
 

@@ -150,7 +150,7 @@ def _host_has_avx2() -> bool:
 
 
 _target_arch = os.environ.get("ARCH", "").lower() or platform.machine().lower()
-# -mavx2 only where the CPU has it (pre-Haswell Xeons such as E5 v1/v2 don't).
+# -mavx2 only where the build machine's CPU has it (some older x86 CPUs don't).
 # NEMOTRON_OCR_AVX2=0/1 overrides, e.g. when building for a different machine.
 _avx2_env = os.environ.get("NEMOTRON_OCR_AVX2")
 _use_avx2 = _avx2_env != "0" if _avx2_env is not None else _host_has_avx2()
