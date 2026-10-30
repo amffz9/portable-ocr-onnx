@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): run on pad_color's device instead of forcing CUDA.
 
 import math
 
@@ -50,8 +51,7 @@ def interpolate_and_pad(
     """
     pad_infer_width = int(math.ceil(infer_length / 128) * 128)
 
-    device = pad_color.device if pad_color.is_cuda else 'cuda'
-    images_gpu = images.to(device, non_blocking=True)
+    images_gpu = images.to(pad_color.device, non_blocking=True)
 
     rs_images = F.interpolate(
         images_gpu, size=(infer_length, infer_length), mode="bilinear", align_corners=True

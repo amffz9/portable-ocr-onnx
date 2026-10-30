@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): configurable device (CPU/CUDA) and FP32 mode.
 
 import base64
+import contextlib
 import io
 import json
 import os
@@ -29,7 +31,7 @@ from torchvision.io import read_image, decode_image
 from torchvision.transforms.functional import convert_image_dtype
 
 PAD_COLOR_CPU = torch.tensor([1.0, 1.0, 1.0], dtype=torch.float16)
-PAD_COLOR = None  # Will be initialized on CUDA on first use
+PAD_COLOR = None  # Will be initialized on the pipeline device on first use
 DEFAULT_INFER_LENGTH = 1024
 DETECTOR_DOWNSAMPLE = 4
 NMS_PROB_THRESHOLD = 0.5
@@ -90,7 +92,10 @@ class NemotronOCR:
         lang: Optional[str] = None,
         detector_only: bool = False,
         skip_relational: bool = False,
+        device=None,
+        precision: Optional[str] = None,
     ):
+        self._setup_device(device, precision)
         self._detector_only = getattr(self, "_detector_only", detector_only)
         self._skip_relational = getattr(self, "_skip_relational", skip_relational)
         # If model_dir is provided and contains all required files, use it directly
@@ -107,6 +112,35 @@ class NemotronOCR:
         self._load_charset()
         self._load_models()
         self._initialize_processors()
+
+    def _setup_device(self, device, precision):
+        """Pick the torch device and numeric precision.
+
+        device: "cuda", "cpu", a torch.device, or None (CUDA if available, else CPU).
+        precision: "fp16" (CUDA autocast + half inputs, upstream behaviour) or "fp32"
+            (no autocast, no half conversions). None: fp16 on CUDA, fp32 elsewhere.
+        """
+        if getattr(self, "device", None) is not None:
+            return
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(device)
+        if precision is None:
+            precision = "fp16" if self.device.type == "cuda" else "fp32"
+        precision = str(precision).lower()
+        if precision not in ("fp16", "fp32"):
+            raise ValueError(f"precision must be 'fp16' or 'fp32'; got {precision!r}")
+        if precision == "fp16" and self.device.type != "cuda":
+            raise ValueError("precision='fp16' is only supported on CUDA; use 'fp32'")
+        self.precision = precision
+        self._use_amp = precision == "fp16"
+        self._compute_dtype = torch.float16 if self._use_amp else torch.float32
+
+    def _autocast(self):
+        """Autocast context for the configured precision (a no-op in fp32 mode)."""
+        if self._use_amp:
+            return amp.autocast(self.device.type, enabled=True)
+        return contextlib.nullcontext()
 
     @staticmethod
     def _resolve_lang(lang: Optional[str]) -> str:
@@ -172,8 +206,8 @@ class NemotronOCR:
             scope=self.scope,
             verbose=False
         )
-        self.detector.load_state_dict(torch.load(self._model_dir / "detector.pth", weights_only=True), strict=True)
-        self.detector = self.detector.cuda()
+        self.detector.load_state_dict(torch.load(self._model_dir / "detector.pth", map_location="cpu", weights_only=True), strict=True)
+        self.detector = self.detector.to(self.device)
         self.detector.eval()
         self.detector.inference_mode = True
 
@@ -214,7 +248,7 @@ class NemotronOCR:
             dim_feedforward=recog_dim_feedforward,
         )
         self.recognizer.load_state_dict(recognizer_state, strict=True)
-        self.recognizer = self.recognizer.cuda()
+        self.recognizer = self.recognizer.to(self.device)
         self.recognizer.eval()
         self.recognizer.inference_mode = True
 
@@ -229,8 +263,8 @@ class NemotronOCR:
             k=16,
             num_layers=4,
         )
-        self.relational.load_state_dict(torch.load(self._model_dir / "relational.pth", weights_only=True), strict=True)
-        self.relational = self.relational.cuda()
+        self.relational.load_state_dict(torch.load(self._model_dir / "relational.pth", map_location="cpu", weights_only=True), strict=True)
+        self.relational = self.relational.to(self.device)
         self.relational.eval()
         self.relational.inference_mode = True
         
@@ -328,7 +362,7 @@ class NemotronOCR:
                 "Supported types are file path (str), base64 (str/bytes), NumPy array, and io.BytesIO"
             )
 
-        return convert_image_dtype(img_tensor, dtype=torch.float16)
+        return convert_image_dtype(img_tensor, dtype=self._compute_dtype)
 
     def _process_tensor(self, image_tensor, merge_level, include_invalid=False):
         """
@@ -345,10 +379,10 @@ class NemotronOCR:
         original_shape = image_tensor.shape[1:]
         padded_length = max(original_shape)
 
-        # Ensure PAD_COLOR is on CUDA (lazy init for efficiency)
+        # Ensure PAD_COLOR is on the pipeline device (lazy init for efficiency)
         global PAD_COLOR
-        if PAD_COLOR is None or not PAD_COLOR.is_cuda:
-            PAD_COLOR = PAD_COLOR_CPU.cuda()
+        if PAD_COLOR is None or PAD_COLOR.device != self.device:
+            PAD_COLOR = PAD_COLOR_CPU.to(self.device)
 
         padded_image = interpolate_and_pad(
             pad_to_square(image_tensor, padded_length, how="bottom_right").unsqueeze(0),
@@ -356,11 +390,11 @@ class NemotronOCR:
             self.infer_length,
         )
 
-        with amp.autocast("cuda", enabled=True), torch.no_grad():
+        with self._autocast(), torch.no_grad():
             # padded_image is already on CUDA from interpolate_and_pad
             det_conf, _, det_rboxes, det_feature_3 = self.detector(padded_image)
 
-        with amp.autocast("cuda", enabled=True), torch.no_grad():
+        with self._autocast(), torch.no_grad():
             e2e_det_conf = torch.sigmoid(det_conf)
             e2e_det_coords = rrect_to_quads(det_rboxes.float(), DETECTOR_DOWNSAMPLE)
 
@@ -375,8 +409,8 @@ class NemotronOCR:
                 verbose=False,
             )[:3]
 
-        # Move quads to CUDA once for reuse
-        quads_cuda = quads.cuda() if quads.numel() > 0 and not quads.is_cuda else quads
+        # Move quads to the pipeline device once for reuse
+        quads_cuda = quads.to(self.device) if quads.numel() > 0 else quads
 
         if quads.shape[0] == 0:
             rec_rectified_quads = torch.empty(0, 128, 8, self.max_width, dtype=torch.float32, device=padded_image.device)
@@ -390,7 +424,7 @@ class NemotronOCR:
             )
 
             input_indices = region_counts_to_indices(region_counts, quads.shape[0])
-            input_indices_cuda = input_indices.cuda() if not input_indices.is_cuda else input_indices
+            input_indices_cuda = input_indices.to(self.device)
 
             # Grid sampling requires float32
             det_features_f32 = det_feature_3.float()
@@ -402,10 +436,10 @@ class NemotronOCR:
             )
 
         if rec_rectified_quads.shape[0] == 0:
-            rec_output = torch.empty(0, self.max_width, self.num_tokens, dtype=torch.float16, device=padded_image.device)
-            rec_features = torch.empty(0, self.max_width, 256, dtype=torch.float16, device=padded_image.device)
+            rec_output = torch.empty(0, self.max_width, self.num_tokens, dtype=self._compute_dtype, device=padded_image.device)
+            rec_features = torch.empty(0, self.max_width, 256, dtype=self._compute_dtype, device=padded_image.device)
         else:
-            with amp.autocast("cuda", enabled=True), torch.no_grad():
+            with self._autocast(), torch.no_grad():
                 # rec_rectified_quads is already on CUDA from grid_sampler
                 rec_output, rec_features = self.recognizer(rec_rectified_quads)
 
@@ -425,7 +459,7 @@ class NemotronOCR:
                 rel_output["line_log_var_unc"],
             )
 
-            with amp.autocast("cuda", enabled=True), torch.no_grad():
+            with self._autocast(), torch.no_grad():
                 words = [F.softmax(r, dim=1, dtype=torch.float32)[:, 1:] for r in words]
 
                 rec_logits = rec_output.float()

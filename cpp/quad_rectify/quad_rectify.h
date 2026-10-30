@@ -1,12 +1,17 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards).
 
 #pragma once
 
 #include <torch/torch.h>
 
 #include "quad_rectify_cpu.h"
+#ifdef WITH_CUDA
 #include "quad_rectify_gpu.h"
+#endif
+
+#define QR_NO_CUDA(name) throw std::runtime_error(name ": this extension was built without CUDA support")
 
 inline
 torch::Tensor quad_rectify_calc_quad_width(torch::Tensor quads,
@@ -27,7 +32,11 @@ torch::Tensor quad_rectify_calc_quad_width(torch::Tensor quads,
     }
 
     if (quads.is_cuda()) {
+#ifdef WITH_CUDA
         return quad_rectify_gpu_calc_quad_width(quads, outputHeight, roundFactor, maxWidth);
+#else
+        QR_NO_CUDA("quad_rectify_calc_quad_width");
+#endif
     } else {
         return quad_rectify_cpu_calc_quad_width(quads, outputHeight, roundFactor, maxWidth);
     }
@@ -57,7 +66,11 @@ torch::Tensor quad_rectify_forward(torch::Tensor quads,
 
     torch::Tensor ret;
     if (quads.is_cuda()) {
+#ifdef WITH_CUDA
         ret = quad_rectify_gpu_forward(quads, imageHeight, imageWidth, outputHeight, outputWidth, isotropic);
+#else
+        QR_NO_CUDA("quad_rectify_forward");
+#endif
     }
     else {
         ret = quad_rectify_cpu_forward(quads, imageHeight, imageWidth, outputHeight, outputWidth, isotropic);
@@ -89,7 +102,11 @@ torch::Tensor quad_rectify_backward(torch::Tensor quads, torch::Tensor gradOutpu
     }
 
     if (quads.is_cuda()) {
+#ifdef WITH_CUDA
         return quad_rectify_gpu_backward(quads, gradOutput, imageHeight, imageWidth, isotropic);
+#else
+        QR_NO_CUDA("quad_rectify_backward");
+#endif
     }
     else {
         return quad_rectify_cpu_backward(quads, gradOutput, imageHeight, imageWidth, isotropic);

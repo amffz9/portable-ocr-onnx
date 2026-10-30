@@ -1,5 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards,
+// pinned memory only when CUDA is available).
 
 #include "non_maximal_suppression.h"
 
@@ -9,7 +11,9 @@
 #include <unordered_set>
 #include <iostream>
 #include <chrono>
+#ifdef WITH_CUDA
 #include <cuda_runtime.h>
+#endif
 #include <fstream>
 
 #include "../geometry.h"
@@ -33,7 +37,9 @@ nms_result_t quad_non_maximal_suppression_cpu_impl(
 
     auto tStart = chrono::high_resolution_clock::now();
 
+#ifdef WITH_CUDA
     cudaDeviceSynchronize();
+#endif
 
     auto tData = chrono::high_resolution_clock::now();
 
@@ -235,7 +241,8 @@ nms_result_t quad_non_maximal_suppression_cpu_impl(
     }
 
     // Allocate the output tensors in pinned memory because they will be immediately sent back to the GPU
-    auto pinnedOpt = torch::TensorOptions().pinned_memory(true);
+    // Only pin when a CUDA backend is present at runtime; pinning fails on CPU-only machines.
+    auto pinnedOpt = torch::TensorOptions().pinned_memory(at::hasCUDA());
 
     // Step 4: Convert the quads into tensor representation
     auto outQuadTensor = torch::empty({ numOutQuads, 4, 2 }, pinnedOpt.dtype(torch::kFloat32));
@@ -292,9 +299,18 @@ nms_result_t quad_non_maximal_suppression(
     int64_t maxRegions,
     bool verbose)
 {
+#ifdef WITH_CUDA
     auto nmsFn = tQuads.is_cuda() ?
         cuda_quad_non_maximal_suppression :
         quad_non_maximal_suppression_cpu_impl;
+#else
+    // CPU-only build: the CPU implementation moves CUDA inputs to the CPU itself,
+    // but a CUDA tensor here means libtorch has CUDA while this extension doesn't.
+    if (tQuads.is_cuda()) {
+        throw std::runtime_error("quad_non_maximal_suppression: this extension was built without CUDA support");
+    }
+    auto nmsFn = quad_non_maximal_suppression_cpu_impl;
+#endif
 
     torch::Tensor quads, confidence, regionCounts;
     tie(quads, confidence, regionCounts) = nmsFn(

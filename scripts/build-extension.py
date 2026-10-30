@@ -2,6 +2,8 @@
 
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only CppExtension build when CUDA is
+# unavailable, per-platform OpenMP/AVX2 flags.
 
 
 import os
@@ -56,29 +58,88 @@ def _detect_arch_list() -> list[str]:
     ]
 
 
-# Decide architectures in this order of precedence:
-# 1) Respect TORCH_CUDA_ARCH_LIST if provided
-# 2) Detect from the visible GPU at runtime
-# 3) Fallback to a safe default list
-arch_env = os.environ.get("TORCH_CUDA_ARCH_LIST", "").strip()
-cuda_architectures = _parse_arch_list(arch_env) if arch_env else _detect_arch_list()
+def _cuda_requested() -> bool:
+    """Build the CUDA extension only if nvcc is usable and not explicitly disabled.
 
-includes = [
-    "-I/usr/local/cuda/include",
-    f"-I{os.getcwd()}/cpp/trove",
-]
+    NEMOTRON_OCR_CPU_ONLY=1 forces a CPU-only build even when nvcc is present.
+    """
+    if os.environ.get("NEMOTRON_OCR_CPU_ONLY", "0") == "1":
+        return False
+    try:
+        import torch  # type: ignore
+        from torch.utils.cpp_extension import CUDA_HOME  # type: ignore
+    except Exception:
+        return False
+    if torch.version.cuda is None:  # CPU-only (or ROCm) torch can't build a CUDAExtension
+        return False
+    if CUDA_HOME is None:
+        return False
+    nvcc = Path(CUDA_HOME) / "bin" / ("nvcc.exe" if os.name == "nt" else "nvcc")
+    return nvcc.exists() or shutil.which("nvcc") is not None
+
+
+def _openmp_flags() -> tuple[list[str], list[str]]:
+    """Return (compile_flags, link_flags) for OpenMP on this platform.
+
+    - Linux/GCC: -fopenmp.
+    - macOS/Apple clang: no built-in OpenMP. Uses Homebrew libomp
+      (`brew install libomp`) via -Xpreprocessor -fopenmp. Set
+      NEMOTRON_OCR_LIBOMP_PREFIX to override the prefix (default: `brew --prefix libomp`,
+      then /opt/homebrew/opt/libomp, then /usr/local/opt/libomp).
+    - NEMOTRON_OCR_NO_OPENMP=1 builds without OpenMP anywhere. The `#pragma omp`
+      loops then run single-threaded; results are unchanged.
+    """
+    if os.environ.get("NEMOTRON_OCR_NO_OPENMP", "0") == "1":
+        return [], []
+    if sys.platform == "darwin":
+        prefix = os.environ.get("NEMOTRON_OCR_LIBOMP_PREFIX", "")
+        if not prefix and shutil.which("brew"):
+            import subprocess
+            try:
+                prefix = subprocess.run(
+                    ["brew", "--prefix", "libomp"], capture_output=True, text=True, check=True
+                ).stdout.strip()
+            except Exception:
+                prefix = ""
+        if not prefix:
+            for cand in ("/opt/homebrew/opt/libomp", "/usr/local/opt/libomp"):
+                if Path(cand).exists():
+                    prefix = cand
+                    break
+        if not prefix or not (Path(prefix) / "include" / "omp.h").exists():
+            print(
+                "WARNING: libomp not found (brew install libomp, or set NEMOTRON_OCR_LIBOMP_PREFIX). "
+                "Building without OpenMP."
+            )
+            return [], []
+        return (
+            ["-Xpreprocessor", "-fopenmp", f"-I{prefix}/include"],
+            [f"-L{prefix}/lib", "-lomp", f"-Wl,-rpath,{prefix}/lib"],
+        )
+    if os.name == "nt":
+        return ["/openmp"], []
+    return ["-fopenmp"], ["-fopenmp"]
+
+
+WITH_CUDA = _cuda_requested()
+
+includes = [f"-I{os.getcwd()}/cpp/trove"]
 
 libs = []
 
 common_args = ["-std=c++17"]
-gcc_args = ["-fopenmp", "-DOMP_NESTED=true"]
+omp_compile, omp_link = _openmp_flags()
+gcc_args = omp_compile + (["-DOMP_NESTED=true"] if omp_compile else [])
 cuda_args = []
+link_args = list(omp_link)
 
 _target_arch = os.environ.get("ARCH", "").lower() or platform.machine().lower()
 if _target_arch in ("x86_64", "amd64"):
     gcc_args += ["-mavx2"]
 
-files = sorted(glob("cpp/**/*.cu", recursive=True) + glob("cpp/**/*.cpp", recursive=True))
+files = sorted(glob("cpp/**/*.cpp", recursive=True))
+if WITH_CUDA:
+    files = sorted(files + glob("cpp/**/*.cu", recursive=True))
 files = [f for f in files if "trove/tests" not in f]
 
 # debug=True
@@ -89,10 +150,24 @@ if debug:
 else:
     common_args += ["-O3", "-DNDEBUG"]
 
-compile_args = {
-    "cxx": common_args + gcc_args + includes,
-    "nvcc": common_args + cuda_args + includes + cuda_architectures,
-}
+if WITH_CUDA:
+    # Decide architectures in this order of precedence:
+    # 1) Respect TORCH_CUDA_ARCH_LIST if provided
+    # 2) Detect from the visible GPU at runtime
+    # 3) Fallback to a safe default list
+    arch_env = os.environ.get("TORCH_CUDA_ARCH_LIST", "").strip()
+    cuda_architectures = _parse_arch_list(arch_env) if arch_env else _detect_arch_list()
+
+    from torch.utils.cpp_extension import CUDA_HOME  # type: ignore
+
+    cuda_includes = [f"-I{Path(CUDA_HOME) / 'include'}"] + includes
+    common_args += ["-DWITH_CUDA"]
+    compile_args = {
+        "cxx": common_args + gcc_args + cuda_includes,
+        "nvcc": common_args + cuda_args + cuda_includes + cuda_architectures,
+    }
+else:
+    compile_args = {"cxx": common_args + gcc_args + includes}
 
 
 def build() -> None:
@@ -101,13 +176,16 @@ def build() -> None:
         sys.exit(0)
 
     from setuptools import Distribution
-    from torch.utils.cpp_extension import CUDAExtension, BuildExtension
+    from torch.utils.cpp_extension import CUDAExtension, CppExtension, BuildExtension
 
+    print(f"Building _nemotron_ocr_cpp ({'CUDA' if WITH_CUDA else 'CPU-only'}, {len(files)} sources)")
+    ext_cls = CUDAExtension if WITH_CUDA else CppExtension
     ext_modules = [
-        CUDAExtension(
+        ext_cls(
             "_nemotron_ocr_cpp",
             files,
             extra_compile_args=compile_args,
+            extra_link_args=link_args,
             libraries=libs,
         )
     ]

@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): configurable device (CPU/CUDA), FP32 mode,
+# device-agnostic timing.
 
 """Batched OCR inference pipeline.
 
@@ -73,9 +75,10 @@ class NemotronOCRV2(NemotronOCR):
         pad_color: RGB padding colour as ``[R, G, B]`` floats in [0, 1].
         pad_how: ``"bottom_right"`` or ``"center"`` padding placement.
         infer_length: Detector input resolution in pixels (default 1024).
-        verbose_post: When True, CUDA-syncs each phase and emits
+        verbose_post: When True, syncs the device after each phase and emits
             per-batch timing via ``logger.info``.
-        **kwargs: Forwarded to :class:`NemotronOCR` (``model_dir``, etc.).
+        **kwargs: Forwarded to :class:`NemotronOCR` (``model_dir``, ``device``,
+            ``precision``, etc.).
     """
 
     def __init__(
@@ -107,13 +110,15 @@ class NemotronOCRV2(NemotronOCR):
         self._prefilter_peak_kernel = prefilter_peak_kernel
         self._verbose_post = verbose_post
 
-        torch.backends.cuda.matmul.allow_tf32 = True
-        torch.backends.cudnn.allow_tf32 = True
+        # TF32 is an fp16-mode speed-up; FP32 mode keeps full-precision matmuls.
+        if self.device.type == "cuda" and self._use_amp:
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
 
         # ── pad_color ────────────────────────────────────────────────
         if pad_color is not None:
             self._pad_color_cpu = torch.tensor(pad_color, dtype=torch.float16)
-            self._pad_color = None  # reset lazy CUDA cache
+            self._pad_color = None  # reset lazy device cache
         if not hasattr(self, "_pad_color_cpu"):
             self._pad_color_cpu = _DEFAULT_PAD_COLOR.clone()
         if not hasattr(self, "_pad_color"):
@@ -145,6 +150,11 @@ class NemotronOCRV2(NemotronOCR):
 
         if not self._detector_only and hasattr(self, "recognizer"):
             self._pad_classifier_for_alignment(64)
+
+    def _sync(self):
+        """Wait for queued device work (for timing). No-op on CPU."""
+        if self.device.type == "cuda":
+            torch.cuda.synchronize(self.device)
 
     # ------------------------------------------------------------------
     # Tensor-core alignment
@@ -220,18 +230,18 @@ class NemotronOCRV2(NemotronOCR):
     # ------------------------------------------------------------------
 
     def _preprocess_batch(self, images, timings=None):
-        """Load, pad, resize all images and return a stacked GPU tensor.
+        """Load, pad, resize all images and return a stacked device tensor.
 
-        Transfers uint8 images to GPU first (smaller PCIe payload), then
+        Transfers uint8 images to the device first (smaller PCIe payload), then
         converts dtype and pads/resizes entirely on device.
 
         Returns:
-            resized_batch: (N, C, H_infer, W_pad) on CUDA
+            resized_batch: (N, C, H_infer, W_pad) on the pipeline device
             original_shapes: list of (H, W) per image
             padded_lengths: list of max(H, W) per image
         """
-        if self._pad_color is None or not self._pad_color.is_cuda:
-            self._pad_color = self._pad_color_cpu.cuda()
+        if self._pad_color is None or self._pad_color.device != self.device:
+            self._pad_color = self._pad_color_cpu.to(self.device)
 
         t_load = 0.0
         t_gpu = 0.0
@@ -250,8 +260,8 @@ class NemotronOCRV2(NemotronOCR):
             padded_lengths.append(padded_length)
 
             t0 = time.perf_counter()
-            tensor_gpu = tensor.to("cuda", non_blocking=True)
-            tensor_gpu = tensor_gpu.to(torch.float16).div_(255.0)
+            tensor_gpu = tensor.to(self.device, non_blocking=True)
+            tensor_gpu = tensor_gpu.to(self._compute_dtype).div_(255.0)
 
             padded = pad_to_square(tensor_gpu, padded_length, how=self._pad_how)
             del tensor_gpu
@@ -335,7 +345,7 @@ class NemotronOCRV2(NemotronOCR):
         n = resized_batch.shape[0]
         conf_parts, rbox_parts, feat_parts = [], [], []
 
-        with amp.autocast("cuda", enabled=True), torch.inference_mode():
+        with self._autocast(), torch.inference_mode():
             for start in range(0, n, self.detector_max_batch_size):
                 end = min(start + self.detector_max_batch_size, n)
                 chunk = resized_batch[start:end]
@@ -403,7 +413,7 @@ class NemotronOCRV2(NemotronOCR):
         with torch.inference_mode():
             e2e_det_conf = torch.sigmoid(det_conf)
 
-        with amp.autocast("cuda", enabled=True), torch.inference_mode():
+        with self._autocast(), torch.inference_mode():
             e2e_det_coords = rrect_to_quads(det_rboxes.float(), DETECTOR_DOWNSAMPLE)
             quads, confidence, region_counts = quad_non_maximal_suppression(
                 e2e_det_coords,
@@ -440,7 +450,7 @@ class NemotronOCRV2(NemotronOCR):
             rec_rectified = self.recognizer_quad_rectifier(quads_cuda, h, w)
 
             input_indices = region_counts_to_indices(region_counts, quads.shape[0])
-            input_indices_cuda = input_indices.cuda(non_blocking=True)
+            input_indices_cuda = input_indices.to(self.device, non_blocking=True)
             region_counts_cpu = region_counts.cpu()
 
             det_fp32 = det_features.float()
@@ -478,15 +488,15 @@ class NemotronOCRV2(NemotronOCR):
             return (
                 torch.empty(0, self.max_width, dtype=torch.int64, device=device),
                 torch.empty(0, self.max_width, dtype=torch.float32, device=device),
-                torch.empty(0, self.max_width, self.recognizer.feature_depth, dtype=torch.float16, device=device),
+                torch.empty(0, self.max_width, self.recognizer.feature_depth, dtype=self._compute_dtype, device=device),
             )
 
         cs = self.recognizer_chunk_size
         ids_parts, probs_parts, feat_parts = [], [], []
-        with amp.autocast("cuda", enabled=True), torch.inference_mode():
+        with self._autocast(), torch.inference_mode():
             for start in range(0, n, cs):
                 end = min(start + cs, n)
-                chunk = rec_quads[start:end].half()
+                chunk = rec_quads[start:end].to(self._compute_dtype)
                 real_n = chunk.shape[0]
                 if real_n < cs:
                     pad = torch.zeros(cs - real_n, *chunk.shape[1:], dtype=chunk.dtype, device=chunk.device)
@@ -529,7 +539,7 @@ class NemotronOCRV2(NemotronOCR):
         Accepts pre-computed argmax ids and per-token probabilities from the
         recognizer (avoids materializing the full logits tensor).
         """
-        with amp.autocast("cuda", enabled=True), torch.inference_mode():
+        with self._autocast(), torch.inference_mode():
             rel_output = self.relational(
                 rel_quads,
                 quads_cuda,
@@ -540,7 +550,7 @@ class NemotronOCRV2(NemotronOCR):
         lines = rel_output["lines"]
         line_var = rel_output["line_log_var_unc"]
 
-        with amp.autocast("cuda", enabled=True), torch.inference_mode():
+        with self._autocast(), torch.inference_mode():
             words = [F.softmax(r, dim=1, dtype=torch.float32)[:, 1:] for r in words]
 
             # Vectorized quad scaling
@@ -685,7 +695,7 @@ class NemotronOCRV2(NemotronOCR):
     def _process_batch(self, images, merge_level, include_invalid):
         """Full batched pipeline.
 
-        When ``verbose_post`` is True, CUDA-syncs each phase and emits
+        When ``verbose_post`` is True, syncs the device after each phase and emits
         per-batch timing via ``logger.info``.  Otherwise runs without
         any synchronisation overhead.
         """
@@ -694,7 +704,7 @@ class NemotronOCRV2(NemotronOCR):
         T = {} if profile else None
 
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
         t_wall = time.perf_counter()
 
         # Phase 1: preprocess
@@ -704,7 +714,7 @@ class NemotronOCRV2(NemotronOCR):
             images, timings=T,
         )
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["preproc_total"] = (time.perf_counter() - t0) * 1000
 
         # Phase 2: detector
@@ -713,7 +723,7 @@ class NemotronOCRV2(NemotronOCR):
         det_conf, det_rboxes, det_features = self._run_detector_batched(resized_batch)
         del resized_batch
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["detector"] = (time.perf_counter() - t0) * 1000
 
         # Phase 2.5: centerness + peak prefilter
@@ -722,7 +732,7 @@ class NemotronOCRV2(NemotronOCR):
                 t0 = time.perf_counter()
             det_conf = self._prefilter_detections(det_conf, det_rboxes)
             if profile:
-                torch.cuda.synchronize()
+                self._sync()
                 T["prefilter"] = (time.perf_counter() - t0) * 1000
 
         # Phase 3: NMS
@@ -731,7 +741,7 @@ class NemotronOCRV2(NemotronOCR):
         nms_result = self._run_nms(det_conf, det_rboxes)
         del det_conf, det_rboxes
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["nms"] = (time.perf_counter() - t0) * 1000
 
         if nms_result is None:
@@ -795,7 +805,7 @@ class NemotronOCRV2(NemotronOCR):
         )
         del det_features
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["rectify"] = (time.perf_counter() - t0) * 1000
 
         # Phase 5: recognizer
@@ -804,12 +814,12 @@ class NemotronOCRV2(NemotronOCR):
         rec_ids, rec_probs, rec_features = self._run_recognizer_chunked(rec_quads)
         del rec_quads
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["recognizer"] = (time.perf_counter() - t0) * 1000
 
         # Phase 6: relational model (skipped in no-relational mode)
         if self._skip_relational:
-            with amp.autocast("cuda", enabled=True), torch.inference_mode():
+            with self._autocast(), torch.inference_mode():
                 scale_factors = torch.as_tensor(
                     padded_lengths, dtype=torch.float32, device=quads_cuda.device,
                 ) / float(self.infer_length)
@@ -882,7 +892,7 @@ class NemotronOCRV2(NemotronOCR):
         )
         del rel_quads
         if profile:
-            torch.cuda.synchronize()
+            self._sync()
             T["relational"] = (time.perf_counter() - t0) * 1000
 
         # Phase 7: postprocess
@@ -893,7 +903,7 @@ class NemotronOCRV2(NemotronOCR):
         )
         if profile:
             T["post_total"] = (time.perf_counter() - t0) * 1000
-            torch.cuda.synchronize()
+            self._sync()
             T["total"] = (time.perf_counter() - t_wall) * 1000
             counts_str = "+".join(str(c) for c in region_counts_cpu.tolist())
             logger.info(

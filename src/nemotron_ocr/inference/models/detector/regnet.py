@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): option to skip the ImageNet weight download.
 
 # Modified from
 # https://github.com/facebookresearch/ClassyVision/blob/main/classy_vision/models/anynet.py
 # https://github.com/facebookresearch/ClassyVision/blob/main/classy_vision/models/regnet.py
 
 
+import contextlib
 import math
 import torch
 
@@ -512,13 +514,31 @@ class RegNet(nn.Module):
                 nn.init.zeros_(m.bias)
 
 
+# ``pretrained=True`` does two things: it selects the ImageNet variant's block widths
+# (see e.g. regnet_x_8gf) and downloads its weights. The OCR checkpoints were trained on
+# that architecture but overwrite every weight, so inference only needs the first part.
+_DOWNLOAD_PRETRAINED = True
+
+
+@contextlib.contextmanager
+def no_pretrained_download():
+    """Build ``pretrained=True`` architectures without fetching ImageNet weights."""
+    global _DOWNLOAD_PRETRAINED
+    prev = _DOWNLOAD_PRETRAINED
+    _DOWNLOAD_PRETRAINED = False
+    try:
+        yield
+    finally:
+        _DOWNLOAD_PRETRAINED = prev
+
+
 def _regnet(
     arch: str, block_params: BlockParams, pretrained: bool, progress: bool, **kwargs: Any
 ) -> RegNet:
     model = RegNet(
         block_params, norm_layer=partial(nn.BatchNorm2d, eps=1e-05, momentum=0.1), **kwargs
     )
-    if pretrained:
+    if pretrained and _DOWNLOAD_PRETRAINED:
         if arch not in model_urls:
             raise ValueError(f"No checkpoint is available for model type {arch}")
         # Essentially, let rank 0 fetch the model first, which may trigger a download.

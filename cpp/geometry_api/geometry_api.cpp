@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards).
 
 #include "geometry_api.h"
 
@@ -41,7 +42,11 @@ torch::Tensor rrect_to_quads_impl(torch::Tensor rrects, T cellSize)
 torch::Tensor rrect_to_quads(torch::Tensor rrects, float cellSize)
 {
     if (rrects.is_cuda()) {
+#ifdef WITH_CUDA
         return rrect_to_quads_gpu(rrects, cellSize);
+#else
+        throw std::runtime_error("rrect_to_quads: this extension was built without CUDA support");
+#endif
     }
 
     torch::Tensor quads;
@@ -84,7 +89,11 @@ torch::Tensor rrect_to_quads_backward_gpu(torch::Tensor rrects, torch::Tensor gr
 torch::Tensor rrect_to_quads_backward(torch::Tensor rrects, torch::Tensor gradOutput)
 {
     if (rrects.is_cuda()) {
+#ifdef WITH_CUDA
         return rrect_to_quads_backward_gpu(rrects, gradOutput);
+#else
+        throw std::runtime_error("rrect_to_quads_backward: this extension was built without CUDA support");
+#endif
     }
 
     torch::Tensor gradInput;

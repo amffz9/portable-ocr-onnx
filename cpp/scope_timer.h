@@ -1,11 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards).
 
 #pragma once
 
 #include <chrono>
 
+#ifdef WITH_CUDA
 #include <cuda_runtime.h>
+#endif
 
 namespace chrono = std::chrono;
 
@@ -31,9 +34,11 @@ public:
 private:
     tp_t GetTP() const
     {
+#ifdef WITH_CUDA
         if (m_enabled && m_synchronize) {
             cudaDeviceSynchronize();
         }
+#endif
         return chrono::high_resolution_clock::now();
     }
 

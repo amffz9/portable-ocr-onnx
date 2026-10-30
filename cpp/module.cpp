@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards).
 
 
 #include "quad_rectify/quad_rectify.h"
@@ -103,11 +104,22 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
             py::arg("relations")
       );
 
+#ifdef WITH_CUDA
+      // CUDA-only kernel. CPU builds don't register it; the Python side falls back to
+      // nemotron_ocr.inference.models.quad_distance, a pure-PyTorch port of the same math.
       m.def("ragged_quad_all_2_all_distance_v2", &ragged_quad_all_2_all_distance_v2, "get the all-to-all distances in ragged-batch quad mode",
             py::arg("embed_quads"), py::arg("region_counts"),
             py::arg("x_factor") = 1.0f,
             py::arg("y_factor") = 1.0f,
             py::arg("allow_self_distance") = true
+      );
+#endif
+      m.attr("WITH_CUDA") = py::bool_(
+#ifdef WITH_CUDA
+            true
+#else
+            false
+#endif
       );
 
       m.def("calc_poly_min_rrect", &calc_poly_min_rrect, "calculate a reasonable bounding rectangle for a given text polygon",

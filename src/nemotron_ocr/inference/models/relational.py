@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): pure-PyTorch fallback for the CUDA-only
+# ragged_quad_all_2_all_distance_v2 op on non-CUDA tensors.
 
 import logging
 import math
@@ -10,10 +12,28 @@ import torch.nn as nn
 from nemotron_ocr.inference.models import blocks
 from nemotron_ocr.inference.models.utils import options
 
-from nemotron_ocr_cpp import (
-    quad_rectify_calc_quad_width,
-    ragged_quad_all_2_all_distance_v2,
+from nemotron_ocr.inference.models.quad_distance import (
+    quad_all_2_all_distance,
+    ragged_quad_all_2_all_distance_v2_torch,
 )
+from nemotron_ocr_cpp import quad_rectify_calc_quad_width
+
+try:  # Only present in CUDA builds of the extension.
+    from nemotron_ocr_cpp import ragged_quad_all_2_all_distance_v2 as _cuda_ragged_quad_distance
+except ImportError:
+    _cuda_ragged_quad_distance = None
+
+
+def ragged_quad_all_2_all_distance_v2(embed_quads, region_counts, x_factor=1.0, y_factor=1.0,
+                                      allow_self_distance=True):
+    """Dispatch to the CUDA kernel for CUDA tensors, else the pure-PyTorch port."""
+    if embed_quads.is_cuda and _cuda_ragged_quad_distance is not None:
+        return _cuda_ragged_quad_distance(
+            embed_quads, region_counts, x_factor, y_factor, allow_self_distance=allow_self_distance
+        )
+    return ragged_quad_all_2_all_distance_v2_torch(
+        embed_quads, region_counts, x_factor, y_factor, allow_self_distance=allow_self_distance
+    )
 
 
 logger = logging.getLogger(__name__)
@@ -435,6 +455,9 @@ class GlobalRelationalModel(nn.Module):
 def get_cdist(
     quads: torch.Tensor, centers: torch.Tensor, x_factor: float = 1.0, y_factor: float = 1.0
 ):
+    if not (quads.is_cuda and _cuda_ragged_quad_distance is not None):
+        return quad_all_2_all_distance(quads, x_factor, y_factor, allow_self_distance=False)
+
     region_counts = torch.tensor([quads.shape[0]], dtype=torch.int64, device=quads.device)
 
     ret = ragged_quad_all_2_all_distance_v2(

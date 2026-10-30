@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
+// Modified from nemotron-ocr 2.0.2 (NVIDIA): CPU-only build support (WITH_CUDA guards).
 
 #pragma once
 
@@ -49,7 +50,11 @@ torch::Tensor indirect_grid_sample_forward(torch::Tensor input, torch::Tensor gr
     }
 
     if (input.is_cuda()) {
+#ifdef WITH_CUDA
         return gpu_indirect_grid_sample_forward(std::move(input), std::move(grid), std::move(inputIndices), method);
+#else
+        throw std::runtime_error("indirect_grid_sample_forward: this extension was built without CUDA support");
+#endif
     } else {
         return cpu_indirect_grid_sample_forward(std::move(input), std::move(grid), std::move(inputIndices), method);
     }
@@ -59,7 +64,11 @@ inline
 std::vector<torch::Tensor> indirect_grad_sample_backward(torch::Tensor gradOutput, torch::Tensor input, torch::Tensor grid, torch::Tensor inputIndices, const std::string &method)
 {
     if (gradOutput.is_cuda()) {
+#ifdef WITH_CUDA
         return gpu_indirect_grad_sample_backward(std::move(gradOutput), std::move(input), std::move(grid), std::move(inputIndices), method);
+#else
+        throw std::runtime_error("indirect_grad_sample_backward: this extension was built without CUDA support");
+#endif
     } else {
         throw std::runtime_error("Not implemented!");
     }

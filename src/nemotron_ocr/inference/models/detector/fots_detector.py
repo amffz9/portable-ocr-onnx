@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): no ImageNet download at construction.
 
 import logging
 from typing import List, Optional, Tuple
@@ -46,7 +47,10 @@ class extractor(nn.Module):
     def __init__(self, backbone="regnet_y_8gf"):
         super().__init__()
 
-        backbone = getattr(regnet, backbone)(pretrained=True)
+        # pretrained=True selects the ImageNet architecture variant the checkpoints use;
+        # the ImageNet weights themselves are overwritten by detector.pth, so don't fetch them.
+        with regnet.no_pretrained_download():
+            backbone = getattr(regnet, backbone)(pretrained=True)
 
         self.depths = backbone.channel_counts
         self.base = backbone.stem
