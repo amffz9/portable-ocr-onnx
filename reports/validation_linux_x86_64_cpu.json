@@ -1,0 +1,433 @@
+{
+ "environment": {
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "processor": "x86_64",
+  "python": "3.12.3",
+  "onnxruntime": "1.31.1",
+  "available_providers": [
+   "AzureExecutionProvider",
+   "CPUExecutionProvider"
+  ],
+  "requested_providers": "auto",
+  "torch": "2.11.0+cpu"
+ },
+ "box_tol_px": 0.5,
+ "variants": {
+  "english": {
+   "variant": "english",
+   "session_providers": {
+    "detector": "CPUExecutionProvider",
+    "sampler": "CPUExecutionProvider",
+    "recognizer": "CPUExecutionProvider",
+    "relational": "CPUExecutionProvider"
+   },
+   "load_seconds": 0.46,
+   "images": {
+    "blank": {
+     "word": {
+      "text_match": "0/0",
+      "max_box_err_px": 0.0
+     },
+     "sentence": {
+      "text_match": "0/0",
+      "max_box_err_px": 0.0
+     },
+     "paragraph": {
+      "text_match": "0/0",
+      "max_box_err_px": 0.0
+     },
+     "seconds": 1.33
+    },
+    "dense": {
+     "word": {
+      "text_match": "362/362",
+      "max_box_err_px": 0.0005
+     },
+     "sentence": {
+      "text_match": "67/67",
+      "max_box_err_px": 0.0005
+     },
+     "paragraph": {
+      "text_match": "55/55",
+      "max_box_err_px": 0.0005
+     },
+     "seconds": 2.248
+    },
+    "form": {
+     "word": {
+      "text_match": "38/38",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "20/20",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "20/20",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.555
+    },
+    "letter": {
+     "word": {
+      "text_match": "125/125",
+      "max_box_err_px": 0.0002
+     },
+     "sentence": {
+      "text_match": "13/13",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "7/7",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.687
+    },
+    "low_contrast": {
+     "word": {
+      "text_match": "62/62",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "7/7",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "1/1",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.736
+    },
+    "multilingual": {
+     "word": {
+      "text_match": "29/29",
+      "max_box_err_px": 0.0011
+     },
+     "sentence": {
+      "text_match": "11/11",
+      "max_box_err_px": 0.001
+     },
+     "paragraph": {
+      "text_match": "6/6",
+      "max_box_err_px": 0.001
+     },
+     "seconds": 1.579
+    },
+    "receipt": {
+     "word": {
+      "text_match": "53/53",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "31/31",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "31/31",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.629
+    },
+    "rotated": {
+     "word": {
+      "text_match": "12/12",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "4/4",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "4/4",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.501
+    },
+    "sample": {
+     "word": {
+      "text_match": "54/54",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "24/24",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "24/24",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.573
+    },
+    "slide": {
+     "word": {
+      "text_match": "27/27",
+      "max_box_err_px": 0.0002
+     },
+     "sentence": {
+      "text_match": "5/5",
+      "max_box_err_px": 0.0002
+     },
+     "paragraph": {
+      "text_match": "5/5",
+      "max_box_err_px": 0.0002
+     },
+     "seconds": 1.63
+    },
+    "sparse_small": {
+     "word": {
+      "text_match": "8/8",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "3/3",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "2/2",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.536
+    },
+    "two_column": {
+     "word": {
+      "text_match": "181/181",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "22/22",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "3/3",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.854
+    }
+   },
+   "failures": [],
+   "peak_rss_mb": 2714.372,
+   "batch": {
+    "images": 12,
+    "seconds": 20.3,
+    "pages_per_s": 0.591,
+    "mismatched": [],
+    "peak_rss_mb": 3291.164
+   },
+   "text_match_rate": 1.0,
+   "text_matches": "1316/1316",
+   "max_box_err_px": 0.0011,
+   "pages_per_s": 0.604,
+   "mean_page_seconds": 1.655,
+   "passed": true
+  },
+  "multilingual": {
+   "variant": "multilingual",
+   "session_providers": {
+    "detector": "CPUExecutionProvider",
+    "sampler": "CPUExecutionProvider",
+    "recognizer": "CPUExecutionProvider",
+    "relational": "CPUExecutionProvider"
+   },
+   "load_seconds": 0.56,
+   "images": {
+    "blank": {
+     "word": {
+      "text_match": "2/2",
+      "max_box_err_px": 0.0003
+     },
+     "sentence": {
+      "text_match": "2/2",
+      "max_box_err_px": 0.0003
+     },
+     "paragraph": {
+      "text_match": "1/1",
+      "max_box_err_px": 0.0003
+     },
+     "seconds": 1.548
+    },
+    "dense": {
+     "word": {
+      "text_match": "65/65",
+      "max_box_err_px": 0.0003
+     },
+     "sentence": {
+      "text_match": "65/65",
+      "max_box_err_px": 0.0002
+     },
+     "paragraph": {
+      "text_match": "54/54",
+      "max_box_err_px": 0.0002
+     },
+     "seconds": 2.991
+    },
+    "form": {
+     "word": {
+      "text_match": "20/20",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "20/20",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "20/20",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.873
+    },
+    "letter": {
+     "word": {
+      "text_match": "13/13",
+      "max_box_err_px": 0.0002
+     },
+     "sentence": {
+      "text_match": "13/13",
+      "max_box_err_px": 0.0002
+     },
+     "paragraph": {
+      "text_match": "7/7",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.708
+    },
+    "low_contrast": {
+     "word": {
+      "text_match": "7/7",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "3/3",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "2/2",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.619
+    },
+    "multilingual": {
+     "word": {
+      "text_match": "8/8",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "8/8",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "7/7",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.695
+    },
+    "receipt": {
+     "word": {
+      "text_match": "31/31",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "31/31",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "31/31",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 2.297
+    },
+    "rotated": {
+     "word": {
+      "text_match": "4/4",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "4/4",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "4/4",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 1.615
+    },
+    "sample": {
+     "word": {
+      "text_match": "27/27",
+      "max_box_err_px": 0.0001
+     },
+     "sentence": {
+      "text_match": "27/27",
+      "max_box_err_px": 0.0001
+     },
+     "paragraph": {
+      "text_match": "27/27",
+      "max_box_err_px": 0.0001
+     },
+     "seconds": 2.02
+    },
+    "slide": {
+     "word": {
+      "text_match": "5/5",
+      "max_box_err_px": 0.0005
+     },
+     "sentence": {
+      "text_match": "5/5",
+      "max_box_err_px": 0.0005
+     },
+     "paragraph": {
+      "text_match": "2/2",
+      "max_box_err_px": 0.0005
+     },
+     "seconds": 1.633
+    },
+    "sparse_small": {
+     "word": {
+      "text_match": "3/3",
+      "max_box_err_px": 0.0
+     },
+     "sentence": {
+      "text_match": "1/1",
+      "max_box_err_px": 0.0
+     },
+     "paragraph": {
+      "text_match": "1/1",
+      "max_box_err_px": 0.0
+     },
+     "seconds": 1.7
+    },
+    "two_column": {
+     "word": {
+      "text_match": "22/22",
+      "max_box_err_px": 0.0008
+     },
+     "sentence": {
+      "text_match": "22/22",
+      "max_box_err_px": 0.0009
+     },
+     "paragraph": {
+      "text_match": "3/3",
+      "max_box_err_px": 0.0005
+     },
+     "seconds": 2.124
+    }
+   },
+   "failures": [],
+   "peak_rss_mb": 3291.164,
+   "batch": {
+    "images": 12,
+    "seconds": 23.04,
+    "pages_per_s": 0.521,
+    "mismatched": [],
+    "peak_rss_mb": 3823.772
+   },
+   "text_match_rate": 1.0,
+   "text_matches": "567/567",
+   "max_box_err_px": 0.0009,
+   "pages_per_s": 0.526,
+   "mean_page_seconds": 1.902,
+   "passed": true
+  }
+ },
+ "passed": true
+}

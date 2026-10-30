@@ -12,8 +12,8 @@ bottom of each section.
 | M1: CPU-only build | done | see git log |
 | M2: golden reference outputs | done | `36ba73f` |
 | M3: ONNX export | done | see git log |
-| M4: ONNX Runtime pipeline | not started | |
-| M5: validation harness + `docs/TARGETS.md` | not started | |
+| M4: ONNX Runtime pipeline | done | `fe9278c` |
+| M5: validation harness + `docs/TARGETS.md` | done (CPU validated; GPU targets untested) | see git log |
 
 ## Environment used here
 
@@ -162,6 +162,109 @@ noise rather than a math difference:
   2e-4 at that scale is ~1.5e-6 relative. These feed a thresholded graph
   clustering, so M4 compares the final grouping.
 
+## M4: ONNX Runtime pipeline
+
+`nemotron_ocr_onnx.NemotronOCRONNX(model_dir="onnx/<variant>", providers="auto")`
+subclasses `NemotronOCRV2` and keeps its call API (`ocr(image_or_list,
+merge_level=..., include_invalid=...)`). It overrides only the phases that ran the
+networks: detector, rectify + sample, recognizer and relational. So preprocessing,
+the prefilter, NMS and all decoding are literally the upstream code. It needs no
+`.pth` weights, only `onnx/<variant>/` (graphs, `model_meta.json`, `charset.txt`,
+`model_config.json`).
+
+- Providers: `"auto"` = CUDA → MIGraphX → CoreML → DirectML → CPU, whichever the
+  installed ORT has. An explicit list or alias (`"cuda"`, `"cpu"`, ...) is also
+  accepted, and a provider named but not installed raises an error. CPU is always
+  appended. A session that fails to create on a GPU provider retries on CPU with a
+  warning. The provider of each graph is logged (INFO) and exposed as
+  `ocr.session_providers`. DirectML gets its required session options, and CUDA
+  calls `onnxruntime.preload_dlls()` for pip-installed CUDA/cuDNN.
+- The sampler and relational graphs run once per image. The recognizer runs in
+  chunks of 32 regions (`recognizer_chunk_size`), because ORT materialises the
+  logits ([chunk, 128, 14247] fp32 for multilingual) even when they aren't fetched.
+  Chunks are not zero-padded as upstream's are, since ORT gains nothing from fixed
+  shapes and rows are independent.
+- `detector_max_batch_size` defaults to 1 on the CPU provider and 8 elsewhere. On
+  CPU, batch 8 was slower (0.44 vs 0.55 pages/s) and peaked at ~9.7 GB RSS, vs
+  ~3.3 GB single-page.
+- Data crosses between ORT and torch as CPU numpy arrays. On a GPU provider this
+  costs a host round trip for the detector features (~32 MB per page). IOBinding
+  could keep them on the device, but it is provider-specific and can't be tested
+  here, so it's left for later.
+
+Acceptance: identical text at word, sentence and paragraph level on every golden
+page for both variants, with boxes within 0.001 px (target 0.5). See M5.
+
+### What a torch-free glue rewrite would need
+
+Everything outside the four graphs still imports torch (CPU wheel only) and the
+C++ extension (built against libtorch). To drop both:
+
+1. **Image loading**: torchvision `read_image` / `decode_image` → Pillow + numpy.
+2. **Preprocessing**: `pad_to_square` and `interpolate_and_pad` (bilinear,
+   `align_corners=True`) → numpy, or a small ONNX `Resize` + `Pad` graph. Must
+   match `F.interpolate` exactly, or detections shift.
+3. **Prefilter**: sigmoid, centerness and 3×3 max-pool peaks → numpy, or fold
+   into the detector graph as extra outputs.
+4. **`rrect_to_quads` + `quad_non_maximal_suppression`** (C++/ATen, the hardest
+   part): a pure C++ or numpy port of the rotated-rect → quad conversion and the
+   kernel-based quad NMS with polygon IoU. Port the C++ to plain C++ (no ATen) with
+   a C ABI or pybind11 on numpy buffers.
+5. **Decoding**: `decode_sequences` and `create_token_mapping` (recognizer) and
+   `dense_relations_to_graph` (relational encoder) are C++ on ATen tensors → plain
+   C++ or numpy. `RecognitionTargetEncoder` / `RelationalTargetEncoder` and
+   `post_processing/research_ops.py` use torch tensors throughout → numpy.
+6. **Data classes** (`TextRegion`, `TextBlock`, quads as tensors) → numpy. Shapely
+   (already a dependency) covers the geometry.
+7. **Tests**: the golden JSON predictions already allow comparing a torch-free build
+   against the reference without torch installed.
+
+Rough size: 1–3 are small. 4 and 5 are about 1,500 lines of C++ to de-ATen.
+6 touches most of `post_processing/`. That's why it is out of scope here.
+
+## M5: validation harness
+
+`scripts/validate.py [--variants ...] [--providers auto|cpu|cuda|...] [--report
+file.json]` does the following:
+
+- Prints platform, Python, ORT version and available providers, plus the provider
+  each graph got.
+- Runs every golden page at word, sentence and paragraph level, compares text
+  (exact) and boxes (≤ `--box-tol`, default 0.5 px), and also runs all pages as one
+  batched call.
+- Reports text match rate, max box error, pages/s (paragraph level, after a warm-up
+  page), and peak RSS for single-page runs and for the batch.
+- Exits 1 on any mismatch and writes a JSON report.
+
+It needs only the committed `tests/golden/` and the upstream sample image, not the
+2 GB full goldens or the PyTorch weights.
+
+Steps for each target (P40/CUDA, AMD/MIGraphX, macOS/CoreML, Windows/DirectML,
+CPU incl. ARM) are in `docs/TARGETS.md`. Only CPU on x86-64 has been run here.
+
+### Results here (4 vCPU x86-64, ORT 1.31.1 CPU, `reports/validation_linux_x86_64_cpu.json`)
+
+| variant | text match | max box error | pages/s (single page) | peak RSS single / batch-12 |
+|---|---|---|---|---|
+| english | 1316/1316 (100%) | 0.001 px | 0.60 (1.66 s/page) | 2.7 GB / 3.3 GB |
+| multilingual | 567/567 (100%) | 0.001 px | 0.53 (1.90 s/page) | 3.3 GB / 3.8 GB |
+
+Both PASS, including the 12-image batched call. For comparison, the PyTorch CPU
+FP32 reference takes ~2.4 s/page (English) and ~7–9 s/page (multilingual) on the
+same machine. RSS is the process peak so far, so the multilingual figures include
+the English run before it.
+
+### Extra real-world check
+
+The owner supplied a 4-page scanned PDF: a typed ordinance with signatures, an
+aerial map with small rotated street labels, and two plan sheets. It was rendered
+at 150 dpi and run through both pipelines. For both variants, every page gave text
+identical to the PyTorch reference at word and paragraph level, with boxes within
+0.0005 px. The ONNX path ran 1.3× (English) to 2.5× (multilingual) faster. The
+typed text read correctly. The signatures and many small map labels are misread
+the same way by both, so that is model accuracy, not a port difference. The PDF
+isn't committed.
+
 ## Decisions
 
 1. **Upstream import goes on top of the owner's "Initial commit"** (README only), so
@@ -190,3 +293,7 @@ noise rather than a math difference:
    behaviour exactly and doesn't fix it, because fixing it changes model output.
    Say if you'd rather have it fixed (opt-in) later.
 2. The repository description on GitHub still says "nvidia-ocr-v2"; optional rename.
+3. **GPU targets are untested.** `docs/TARGETS.md` follows each provider's
+   documentation. P40 risk: whether a given `onnxruntime-gpu` 1.2x wheel includes
+   sm_61 kernels (the docs say how to tell and what to do). Please send back the
+   `validate.py` JSON from each machine.

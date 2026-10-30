@@ -12,9 +12,28 @@ without CUDA:
 - A validation harness checks that the ONNX pipeline matches the original PyTorch
   pipeline on any target machine.
 
-Work in progress; see [PROGRESS.md](PROGRESS.md) for what is done.
+Status: all milestones done and validated on CPU (x86-64 Linux). GPU and ARM
+targets have documented steps but haven't been run yet. See
+[PROGRESS.md](PROGRESS.md) and [docs/TARGETS.md](docs/TARGETS.md).
 
-## Quick start (PyTorch reference pipeline, CPU)
+## Quick start (ONNX Runtime)
+
+Install as in the next section, then:
+
+```bash
+pip install onnxruntime onnx              # or onnxruntime-gpu / -directml, see docs/TARGETS.md
+python scripts/export_onnx.py --variant english --no-check   # writes onnx/english/
+python scripts/validate.py --variants english                 # compares against tests/golden
+```
+
+```python
+from nemotron_ocr_onnx import NemotronOCRONNX
+
+ocr = NemotronOCRONNX("onnx/english", providers="auto")
+print(ocr("page.png", merge_level="paragraph"))
+```
+
+## Install and run the PyTorch reference pipeline (CPU)
 
 ```bash
 python3.12 -m venv .venv && . .venv/bin/activate
@@ -34,7 +53,14 @@ Build options (environment variables): `NEMOTRON_OCR_CPU_ONLY=1` (skip CUDA even
 - `src/nemotron_ocr/`, `src/nemotron_ocr_cpp/`, `cpp/`: upstream package, modified
   for CPU builds (each changed file says so at the top).
 - `docs/ARCHITECTURE.md`: how the upstream pipeline fits together.
+- `src/nemotron_ocr_onnx/`: ONNX export wrappers (`export_modules.py`) and the
+  ONNX Runtime pipeline (`NemotronOCRONNX`).
 - `scripts/fetch_weights.sh`: weight download.
+- `scripts/export_onnx.py`: export + check against the full goldens.
+- `scripts/make_test_pages.py`, `scripts/make_golden.py`: test pages and reference
+  outputs (`tests/images/`, `tests/golden/`).
+- `scripts/validate.py`: end-to-end validation on any machine.
+- `docs/TARGETS.md`: install steps per platform.
 
 ## Licences
 
