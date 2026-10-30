@@ -2,7 +2,8 @@
 """Export the Nemotron OCR v2 networks to ONNX and check them against the goldens.
 
 Writes onnx/<variant>/{detector,sampler,recognizer,relational}.onnx (FP32, opset 17)
-plus model_meta.json (charset, sizes) used by nemotron_ocr_onnx at runtime.
+plus model_meta.json (charset, sizes) used by nemotron_ocr_onnx at runtime, and the
+NOTICE + NVIDIA Open Model License copy required when the graphs are redistributed.
 
 With --check (default) each graph is validated with onnx.checker, scanned for
 non-standard ops, and run through ONNX Runtime (CPU) on every image in
@@ -148,6 +149,10 @@ def export_all(variant: str, model_dir: Path, out: Path):
     (out / "model_meta.json").write_text(json.dumps(meta, indent=1))
     for f in ("charset.txt", "model_config.json"):
         shutil.copyfile(model_dir / f, out / f)
+    # The graphs are a Derivative Model of the NVIDIA weights: anyone who shares this
+    # directory must pass on the agreement and the NOTICE file, so ship both with it.
+    shutil.copyfile(ROOT / "NOTICE", out / "NOTICE")
+    shutil.copyfile(ROOT / "LICENSES" / "NVIDIA-Open-Model-License.txt", out / "LICENSE.txt")
     return timings
 
 

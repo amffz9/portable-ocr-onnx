@@ -1,5 +1,5 @@
 # Modified from nemotron-ocr 2.0.2 (NVIDIA): adds the nemotron_ocr_onnx package,
-# onnx/export extras and Windows (.pyd) extension artifacts.
+# onnx/export extras, Windows (.pyd) extension artifacts and licence files in the sdist.
 [project]
 name = "nemotron-ocr"
 version = "2.0.2"
@@ -62,4 +62,7 @@ include = [
     "pyproject.toml",
     "README.md",
     "LICENSE*",
+    "LICENSES/**",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md",
 ]
