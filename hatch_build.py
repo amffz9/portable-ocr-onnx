@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): also recognise Windows .pyd builds.
 
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ def _extension_up_to_date(project_root: Path) -> bool:
       - scripts/ (build script)
     """
     extension_dir = project_root / "src" / "nemotron_ocr_cpp"
-    candidates = list(extension_dir.glob("_nemotron_ocr_cpp*.so"))
+    candidates = [p for ext in ("so", "pyd") for p in extension_dir.glob(f"_nemotron_ocr_cpp*.{ext}")]
     if not candidates:
         return False
 

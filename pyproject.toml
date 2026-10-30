@@ -1,3 +1,5 @@
+# Modified from nemotron-ocr 2.0.2 (NVIDIA): adds the nemotron_ocr_onnx package,
+# onnx/export extras and Windows (.pyd) extension artifacts.
 [project]
 name = "nemotron-ocr"
 version = "2.0.2"
@@ -18,6 +20,10 @@ dependencies = [
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
+[project.optional-dependencies]
+onnx = ["onnxruntime>=1.20"]
+export = ["onnx>=1.16"]
+
 [project.urls]
 Homepage = "https://nvidia.com/"
 
@@ -34,12 +40,13 @@ requires = ["hatchling", "editables"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build]
-artifacts = ["src/nemotron_ocr_cpp/*.so"]
+artifacts = ["src/nemotron_ocr_cpp/*.so", "src/nemotron_ocr_cpp/*.pyd"]
 
 [tool.hatch.build.targets.wheel]
 packages = [
     "src/nemotron_ocr",
     "src/nemotron_ocr_cpp",
+    "src/nemotron_ocr_onnx",
 ]
 
 [tool.hatch.build.targets.wheel.hooks.custom]
