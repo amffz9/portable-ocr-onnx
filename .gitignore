@@ -7,3 +7,11 @@ __pycache__/
 .venv/
 build/
 *.egg-info/
+
+# Model weights and exported graphs (NVIDIA Open Model License; never commit)
+weights/
+onnx/
+*.pth
+*.pt
+*.onnx
+*.onnx.data
