@@ -1,0 +1,480 @@
+{
+ "image": "tests/images/letter.png",
+ "variant": "multilingual",
+ "original_hw": [
+  1100,
+  850
+ ],
+ "padded_length": 1100,
+ "num_regions": 13,
+ "predictions": {
+  "word": [
+   {
+    "text": "Riverside Community Library",
+    "confidence": 0.9380760582376252,
+    "left": 0.09443596005439758,
+    "upper": 0.09444817155599594,
+    "right": 0.6747267246246338,
+    "lower": 0.06846688687801361,
+    "box_px": [
+     80.27056604623795,
+     75.31357556581497,
+     573.5177159309387,
+     103.89298871159554
+    ]
+   },
+   {
+    "text": "Minutes of the February committee meeting",
+    "confidence": 0.9355581400940042,
+    "left": 0.0938175842165947,
+    "upper": 0.12278758734464645,
+    "right": 0.4857250154018402,
+    "lower": 0.10648274421691895,
+    "box_px": [
+     79.74494658410549,
+     117.13101863861084,
+     412.8662630915642,
+     135.0663460791111
+    ]
+   },
+   {
+    "text": "The committee met on Tuesday morning to review the proposed changes to the",
+    "confidence": 0.9384160999620041,
+    "left": 0.09451643377542496,
+    "upper": 0.18224602937698364,
+    "right": 0.8953685760498047,
+    "lower": 0.1657583862543106,
+    "box_px": [
+     80.33896870911121,
+     182.33422487974167,
+     761.063289642334,
+     200.470632314682
+    ]
+   },
+   {
+    "text": "village library opening hours. After a short discussion, members agreed to",
+    "confidence": 0.9389650712152199,
+    "left": 0.09269753098487854,
+    "upper": 0.2060086578130722,
+    "right": 0.8506942391395569,
+    "lower": 0.18912345170974731,
+    "box_px": [
+     78.79290133714676,
+     208.03579688072205,
+     723.0901032686234,
+     226.60952359437943
+    ]
+   },
+   {
+    "text": "extend weekday hours until seven in the evening from the first of March.",
+    "confidence": 0.9392436544655642,
+    "left": 0.09419941902160645,
+    "upper": 0.22850340604782104,
+    "right": 0.83281409740448,
+    "lower": 0.21271847188472748,
+    "box_px": [
+     80.06950616836548,
+     233.99031907320023,
+     707.891982793808,
+     251.35374665260315
+    ]
+   },
+   {
+    "text": "Volunteers will be needed to staff the front desk during the extra hours.",
+    "confidence": 0.9382661607030134,
+    "left": 0.0954643040895462,
+    "upper": 0.2686093747615814,
+    "right": 0.8222243189811707,
+    "lower": 0.25282537937164307,
+    "box_px": [
+     81.14465847611427,
+     278.1079173088074,
+     698.890671133995,
+     295.47031223773956
+    ]
+   },
+   {
+    "text": "Anyone interested should leave their name and a contact number with the",
+    "confidence": 0.9383855756934919,
+    "left": 0.09361223876476288,
+    "upper": 0.2914537489414215,
+    "right": 0.8462737202644348,
+    "lower": 0.2764967679977417,
+    "box_px": [
+     79.57040295004845,
+     304.14644479751587,
+     719.3326622247696,
+     320.59912383556366
+    ]
+   },
+   {
+    "text": "librarian before the end of the month.",
+    "confidence": 0.9384098227252913,
+    "left": 0.09631814062595367,
+    "upper": 0.31381577253341675,
+    "right": 0.47520574927330017,
+    "lower": 0.3005391061306,
+    "box_px": [
+     81.87041953206062,
+     330.59301674366,
+     403.92488688230515,
+     345.1973497867584
+    ]
+   },
+   {
+    "text": "The treasurer reported that the roof repairs came in under budget, leaving a",
+    "confidence": 0.938657379053175,
+    "left": 0.09436459839344025,
+    "upper": 0.3571668565273285,
+    "right": 0.8751771450042725,
+    "lower": 0.3396115303039551,
+    "box_px": [
+     80.20990863442421,
+     373.5726833343506,
+     743.9005732536316,
+     392.88354218006134
+    ]
+   },
+   {
+    "text": "small surplus that will be carried forward to next year's maintenance fund.",
+    "confidence": 0.9389324179621348,
+    "left": 0.09725972265005112,
+    "upper": 0.3796825110912323,
+    "right": 0.8553813695907593,
+    "lower": 0.3636348843574524,
+    "box_px": [
+     82.67076425254345,
+     399.99837279319763,
+     727.0741641521454,
+     417.65076220035553
+    ]
+   },
+   {
+    "text": "Finally, the chair thanked everyone who helped with the autumn book sale,",
+    "confidence": 0.9394453797980598,
+    "left": 0.09284963458776474,
+    "upper": 0.4202667474746704,
+    "right": 0.8529118299484253,
+    "lower": 0.404096394777298,
+    "box_px": [
+     78.92218939960003,
+     444.50603425502777,
+     724.9750554561615,
+     462.29342222213745
+    ]
+   },
+   {
+    "text": "which raised more money than any previous year.",
+    "confidence": 0.9381145496239354,
+    "left": 0.09530121833086014,
+    "upper": 0.44415345788002014,
+    "right": 0.5975199341773987,
+    "lower": 0.4276179373264313,
+    "box_px": [
+     81.00603558123112,
+     470.3797310590744,
+     507.8919440507889,
+     488.56880366802216
+    ]
+   },
+   {
+    "text": "Signed: J. Example, Secretary",
+    "confidence": 0.9388698858667895,
+    "left": 0.09612036496400833,
+    "upper": 0.5114253163337708,
+    "right": 0.3956362307071686,
+    "lower": 0.4947097599506378,
+    "box_px": [
+     81.70231021940708,
+     544.1807359457016,
+     336.2907961010933,
+     562.5678479671478
+    ]
+   }
+  ],
+  "sentence": [
+   {
+    "text": "Riverside Community Library",
+    "confidence": 0.9380760582376252,
+    "left": 0.09443596335018382,
+    "upper": 0.0944481728293679,
+    "right": 0.6747267061121324,
+    "lower": 0.06846688704057173,
+    "box_px": [
+     80.27056884765625,
+     75.3135757446289,
+     573.5177001953125,
+     103.8929901123047
+    ]
+   },
+   {
+    "text": "Minutes of the February committee meeting",
+    "confidence": 0.9355581400940042,
+    "left": 0.0938175874597886,
+    "upper": 0.12278758655894886,
+    "right": 0.48572502585018384,
+    "lower": 0.1064827450838956,
+    "box_px": [
+     79.74494934082031,
+     117.13101959228516,
+     412.86627197265625,
+     135.06634521484375
+    ]
+   },
+   {
+    "text": "The committee met on Tuesday morning to review the proposed changes to the",
+    "confidence": 0.9384160999620041,
+    "left": 0.09451643102309283,
+    "upper": 0.1822460243918679,
+    "right": 0.8953685805376839,
+    "lower": 0.1657583895596591,
+    "box_px": [
+     80.3389663696289,
+     182.334228515625,
+     761.0632934570312,
+     200.4706268310547
+    ]
+   },
+   {
+    "text": "village library opening hours. After a short discussion, members agreed to",
+    "confidence": 0.9389650712152199,
+    "left": 0.0926975295122932,
+    "upper": 0.20600866144353694,
+    "right": 0.8506942210477941,
+    "lower": 0.18912345192649146,
+    "box_px": [
+     78.79290008544922,
+     208.03579711914062,
+     723.090087890625,
+     226.60952758789062
+    ]
+   },
+   {
+    "text": "extend weekday hours until seven in the evening from the first of March.",
+    "confidence": 0.9392436544655642,
+    "left": 0.09419941621668199,
+    "upper": 0.22850340409712358,
+    "right": 0.8328140797334559,
+    "lower": 0.21271847811612216,
+    "box_px": [
+     80.06950378417969,
+     233.99032592773438,
+     707.8919677734375,
+     251.35374450683594
+    ]
+   },
+   {
+    "text": "Volunteers will be needed to staff the front desk during the extra hours.",
+    "confidence": 0.9382661607030134,
+    "left": 0.09546430699965533,
+    "upper": 0.26860936945134944,
+    "right": 0.8222243365119485,
+    "lower": 0.25282537286931817,
+    "box_px": [
+     81.14466094970703,
+     278.10791015625,
+     698.8906860351562,
+     295.4703063964844
+    ]
+   },
+   {
+    "text": "Anyone interested should leave their name and a contact number with the",
+    "confidence": 0.9383855756934919,
+    "left": 0.09361224006204044,
+    "upper": 0.2914537464488636,
+    "right": 0.8462736960018382,
+    "lower": 0.27649677623401986,
+    "box_px": [
+     79.57040405273438,
+     304.1464538574218,
+     719.3326416015625,
+     320.59912109375
+    ]
+   },
+   {
+    "text": "librarian before the end of the month.",
+    "confidence": 0.9384098227252913,
+    "left": 0.09631814395680147,
+    "upper": 0.31381577925248577,
+    "right": 0.4752057602826287,
+    "lower": 0.30053910688920454,
+    "box_px": [
+     81.87042236328125,
+     330.593017578125,
+     403.9248962402344,
+     345.1973571777344
+    ]
+   },
+   {
+    "text": "The treasurer reported that the roof repairs came in under budget, leaving a",
+    "confidence": 0.938657379053175,
+    "left": 0.09436459709616268,
+    "upper": 0.3571668590198864,
+    "right": 0.8751771455652574,
+    "lower": 0.3396115389737216,
+    "box_px": [
+     80.20990753173828,
+     373.57269287109375,
+     743.9005737304688,
+     392.883544921875
+    ]
+   },
+   {
+    "text": "small surplus that will be carried forward to next year's maintenance fund.",
+    "confidence": 0.9389324179621348,
+    "left": 0.09725971895105699,
+    "upper": 0.3796825062144886,
+    "right": 0.8553813620174633,
+    "lower": 0.3636348932439631,
+    "box_px": [
+     82.67076110839844,
+     399.9983825683594,
+     727.0741577148438,
+     417.6507568359375
+    ]
+   },
+   {
+    "text": "Finally, the chair thanked everyone who helped with the autumn book sale,",
+    "confidence": 0.9394453797980598,
+    "left": 0.09284963271197151,
+    "upper": 0.42026675137606534,
+    "right": 0.852911807789522,
+    "lower": 0.40409640225497157,
+    "box_px": [
+     78.92218780517578,
+     444.50604248046875,
+     724.9750366210938,
+     462.2934265136719
+    ]
+   },
+   {
+    "text": "which raised more money than any previous year.",
+    "confidence": 0.9381145496239354,
+    "left": 0.09530121747185202,
+    "upper": 0.4441534701260653,
+    "right": 0.597519962086397,
+    "lower": 0.4276179365678267,
+    "box_px": [
+     81.00603485107422,
+     470.3797302246094,
+     507.89196777343744,
+     488.5688171386719
+    ]
+   },
+   {
+    "text": "Signed: J. Example, Secretary",
+    "confidence": 0.9388698858667895,
+    "left": 0.09612036312327665,
+    "upper": 0.5114253373579546,
+    "right": 0.3956362376493566,
+    "lower": 0.49470975008877843,
+    "box_px": [
+     81.70230865478516,
+     544.1807250976562,
+     336.2908020019531,
+     562.56787109375
+    ]
+   }
+  ],
+  "paragraph": [
+   {
+    "text": "Riverside Community Library",
+    "confidence": 0.9380760582376252,
+    "left": 0.09443596335018382,
+    "upper": 0.0944481728293679,
+    "right": 0.6747267061121324,
+    "lower": 0.06846688704057173,
+    "box_px": [
+     80.27056884765625,
+     75.3135757446289,
+     573.5177001953125,
+     103.8929901123047
+    ]
+   },
+   {
+    "text": "Minutes of the February committee meeting",
+    "confidence": 0.9355581400940042,
+    "left": 0.0938175874597886,
+    "upper": 0.12278758655894886,
+    "right": 0.48572502585018384,
+    "lower": 0.1064827450838956,
+    "box_px": [
+     79.74494934082031,
+     117.13101959228516,
+     412.86627197265625,
+     135.06634521484375
+    ]
+   },
+   {
+    "text": "The committee met on Tuesday morning to review the proposed changes to the village library opening hours. After a short discussion, members agreed to extend weekday hours until seven in the evening from the first of March.",
+    "confidence": 0.9388749418809295,
+    "left": 0.0926975295122932,
+    "upper": 0.22850340409712358,
+    "right": 0.8953685805376839,
+    "lower": 0.1657583895596591,
+    "box_px": [
+     78.79290008544922,
+     182.334228515625,
+     761.0632934570312,
+     251.35374450683594
+    ]
+   },
+   {
+    "text": "Volunteers will be needed to staff the front desk during the extra hours. Anyone interested should leave their name and a contact number with the librarian before the end of the month.",
+    "confidence": 0.9383538530405989,
+    "left": 0.09361224006204044,
+    "upper": 0.31381577925248577,
+    "right": 0.8462736960018382,
+    "lower": 0.25282537286931817,
+    "box_px": [
+     79.57040405273438,
+     278.10791015625,
+     719.3326416015625,
+     345.1973571777344
+    ]
+   },
+   {
+    "text": "The treasurer reported that the roof repairs came in under budget, leaving a small surplus that will be carried forward to next year's maintenance fund.",
+    "confidence": 0.9387948985076549,
+    "left": 0.09436459709616268,
+    "upper": 0.3796825062144886,
+    "right": 0.8751771455652574,
+    "lower": 0.3396115389737216,
+    "box_px": [
+     80.20990753173828,
+     373.57269287109375,
+     743.9005737304688,
+     417.6507568359375
+    ]
+   },
+   {
+    "text": "Finally, the chair thanked everyone who helped with the autumn book sale, which raised more money than any previous year.",
+    "confidence": 0.9387799647109976,
+    "left": 0.09284963271197151,
+    "upper": 0.4441534701260653,
+    "right": 0.852911807789522,
+    "lower": 0.40409640225497157,
+    "box_px": [
+     78.92218780517578,
+     444.50604248046875,
+     724.9750366210938,
+     488.5688171386719
+    ]
+   },
+   {
+    "text": "Signed: J. Example, Secretary",
+    "confidence": 0.9388698858667895,
+    "left": 0.09612036312327665,
+    "upper": 0.5114253373579546,
+    "right": 0.3956362376493566,
+    "lower": 0.49470975008877843,
+    "box_px": [
+     81.70230865478516,
+     544.1807250976562,
+     336.2908020019531,
+     562.56787109375
+    ]
+   }
+  ]
+ }
+}

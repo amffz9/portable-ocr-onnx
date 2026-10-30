@@ -1,0 +1,186 @@
+{
+ "image": "tests/images/low_contrast.png",
+ "variant": "multilingual",
+ "original_hw": [
+  700,
+  900
+ ],
+ "padded_length": 900,
+ "num_regions": 7,
+ "predictions": {
+  "word": [
+   {
+    "text": "The committee met on Tuesday morning to review the",
+    "confidence": 0.9376307322686337,
+    "left": 0.07811497151851654,
+    "upper": 0.15672408044338226,
+    "right": 0.8155011534690857,
+    "lower": 0.11398371309041977,
+    "box_px": [
+     70.30347436666489,
+     79.78859916329384,
+     733.9510381221771,
+     109.70685631036758
+    ]
+   },
+   {
+    "text": "proposed changes to the village library opening hours. After a",
+    "confidence": 0.9379188164229133,
+    "left": 0.07830863445997238,
+    "upper": 0.21097522974014282,
+    "right": 0.9192913174629211,
+    "lower": 0.16762970387935638,
+    "box_px": [
+     70.47777101397514,
+     117.34079271554947,
+     827.362185716629,
+     147.68266081809998
+    ]
+   },
+   {
+    "text": "short discussion, members agreed to extend weekday hours",
+    "confidence": 0.9379382375157397,
+    "left": 0.0775642991065979,
+    "upper": 0.26464125514030457,
+    "right": 0.8880014419555664,
+    "lower": 0.2230442762374878,
+    "box_px": [
+     69.80786919593811,
+     156.13099336624146,
+     799.2012977600098,
+     185.2488785982132
+    ]
+   },
+   {
+    "text": "until seven in the evening from the first of March. The",
+    "confidence": 0.9379137085296617,
+    "left": 0.0786663144826889,
+    "upper": 0.3188447952270508,
+    "right": 0.8110384941101074,
+    "lower": 0.2767740786075592,
+    "box_px": [
+     70.79968303442001,
+     193.74185502529144,
+     729.9346446990967,
+     223.19135665893555
+    ]
+   },
+   {
+    "text": "treasurer reported that the roof repairs came in under",
+    "confidence": 0.9385895345832842,
+    "left": 0.07764735817909241,
+    "upper": 0.37325331568717957,
+    "right": 0.8182749152183533,
+    "lower": 0.3320358991622925,
+    "box_px": [
+     69.88262236118317,
+     232.42512941360474,
+     736.447423696518,
+     261.2773209810257
+    ]
+   },
+   {
+    "text": "budget, leaving a small surplus that will be carried forward to",
+    "confidence": 0.938069694446622,
+    "left": 0.0774228572845459,
+    "upper": 0.4280606210231781,
+    "right": 0.9200103282928467,
+    "lower": 0.3840384781360626,
+    "box_px": [
+     69.68057155609131,
+     268.82693469524384,
+     828.009295463562,
+     299.64243471622467
+    ]
+   },
+   {
+    "text": "next year's maintenance fund.",
+    "confidence": 0.9378651386229019,
+    "left": 0.07936803996562958,
+    "upper": 0.4819784462451935,
+    "right": 0.48596373200416565,
+    "lower": 0.43973004817962646,
+    "box_px": [
+     71.43123596906662,
+     307.8110337257385,
+     437.3673588037491,
+     337.38491237163544
+    ]
+   }
+  ],
+  "sentence": [
+   {
+    "text": "The committee met on Tuesday morning to review the",
+    "confidence": 0.9376307322686337,
+    "left": 0.07811497158474393,
+    "upper": 0.15672407967703683,
+    "right": 0.8155011664496528,
+    "lower": 0.11398371015276228,
+    "box_px": [
+     70.30347442626953,
+     79.7885971069336,
+     733.9510498046875,
+     109.70685577392578
+    ]
+   },
+   {
+    "text": "proposed changes to the village library opening hours. After a",
+    "confidence": 0.9379188164229133,
+    "left": 0.07830863104926215,
+    "upper": 0.21097523280552455,
+    "right": 0.9192913140190972,
+    "lower": 0.1676297106061663,
+    "box_px": [
+     70.47776794433594,
+     117.3407974243164,
+     827.3621826171875,
+     147.6826629638672
+    ]
+   },
+   {
+    "text": "short discussion, members agreed to extend weekday hours until seven in the evening from the first of March. The treasurer reported that the roof repairs came in under budget, leaving a small surplus that will be carried forward to next year's maintenance fund.",
+    "confidence": 0.9380752627396418,
+    "left": 0.07742285834418403,
+    "upper": 0.48197845458984373,
+    "right": 0.9200103081597222,
+    "lower": 0.22304428100585938,
+    "box_px": [
+     69.68057250976562,
+     156.13099670410156,
+     828.00927734375,
+     337.3849182128906
+    ]
+   }
+  ],
+  "paragraph": [
+   {
+    "text": "The committee met on Tuesday morning to review the proposed changes to the village library opening hours. After a",
+    "confidence": 0.9377747743457735,
+    "left": 0.07811497158474393,
+    "upper": 0.21097523280552455,
+    "right": 0.9192913140190972,
+    "lower": 0.11398371015276228,
+    "box_px": [
+     70.30347442626953,
+     79.7885971069336,
+     827.3621826171875,
+     147.6826629638672
+    ]
+   },
+   {
+    "text": "short discussion, members agreed to extend weekday hours until seven in the evening from the first of March. The treasurer reported that the roof repairs came in under budget, leaving a small surplus that will be carried forward to next year's maintenance fund.",
+    "confidence": 0.9380752627396418,
+    "left": 0.07742285834418403,
+    "upper": 0.48197845458984373,
+    "right": 0.9200103081597222,
+    "lower": 0.22304428100585938,
+    "box_px": [
+     69.68057250976562,
+     156.13099670410156,
+     828.00927734375,
+     337.3849182128906
+    ]
+   }
+  ]
+ }
+}

@@ -15,3 +15,6 @@ onnx/
 *.pt
 *.onnx
 *.onnx.data
+
+# Full-size golden tensors (regenerate with scripts/make_golden.py --full)
+tests/golden_full/

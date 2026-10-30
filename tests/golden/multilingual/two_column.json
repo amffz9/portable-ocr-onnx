@@ -1,0 +1,676 @@
+{
+ "image": "tests/images/two_column.png",
+ "variant": "multilingual",
+ "original_hw": [
+  1300,
+  1000
+ ],
+ "padded_length": 1300,
+ "num_regions": 22,
+ "predictions": {
+  "word": [
+   {
+    "text": "Gardening Notes for Early Spring",
+    "confidence": 0.9385240715588711,
+    "left": 0.06045413762331009,
+    "upper": 0.07483524084091187,
+    "right": 0.6922871470451355,
+    "lower": 0.040312446653842926,
+    "box_px": [
+     60.45413762331009,
+     52.406180649995804,
+     692.2871470451355,
+     97.28581309318542
+    ]
+   },
+   {
+    "text": "Start by clearing old leaves from borders and",
+    "confidence": 0.9370065018609112,
+    "left": 0.06041713431477547,
+    "upper": 0.12438438832759857,
+    "right": 0.4175634980201721,
+    "lower": 0.10872507840394974,
+    "box_px": [
+     60.41713431477547,
+     141.34260192513466,
+     417.5634980201721,
+     161.69970482587814
+    ]
+   },
+   {
+    "text": "from borders and checking stakes and ties. Sow",
+    "confidence": 0.9373923131647638,
+    "left": 0.5302820801734924,
+    "upper": 0.12456567585468292,
+    "right": 0.9132649302482605,
+    "lower": 0.10895860195159912,
+    "box_px": [
+     530.2820801734924,
+     141.64618253707886,
+     913.2649302482605,
+     161.9353786110878
+    ]
+   },
+   {
+    "text": "checking stakes and ties. Sow tomatoes and",
+    "confidence": 0.9383613949912071,
+    "left": 0.060722287744283676,
+    "upper": 0.14504729211330414,
+    "right": 0.4141954779624939,
+    "lower": 0.12963411211967468,
+    "box_px": [
+     60.722287744283676,
+     168.5243457555771,
+     414.1954779624939,
+     188.56147974729538
+    ]
+   },
+   {
+    "text": "tomatoes and peppers indoors on a sunny",
+    "confidence": 0.9373417296531109,
+    "left": 0.5306467413902283,
+    "upper": 0.14560547471046448,
+    "right": 0.8657729029655457,
+    "lower": 0.12947362661361694,
+    "box_px": [
+     530.6467413902283,
+     168.31571459770203,
+     865.7729029655457,
+     189.28711712360382
+    ]
+   },
+   {
+    "text": "peppers indoors on a sunny windowsill, keeping",
+    "confidence": 0.9391287615466376,
+    "left": 0.06172768399119377,
+    "upper": 0.16667985916137695,
+    "right": 0.4417615532875061,
+    "lower": 0.1502811163663864,
+    "box_px": [
+     61.72768399119377,
+     195.36545127630234,
+     441.7615532875061,
+     216.68381690979004
+    ]
+   },
+   {
+    "text": "windowsill, keeping the compost moist but not wet.",
+    "confidence": 0.9374265929008468,
+    "left": 0.5303763151168823,
+    "upper": 0.16652677953243256,
+    "right": 0.9315279722213745,
+    "lower": 0.15013016760349274,
+    "box_px": [
+     530.3763151168823,
+     195.16921788454056,
+     931.5279722213745,
+     216.48481339216232
+    ]
+   },
+   {
+    "text": "the compost moist but not wet. Prune late flowering",
+    "confidence": 0.9384715922097895,
+    "left": 0.06177661567926407,
+    "upper": 0.1867198348045349,
+    "right": 0.46979472041130066,
+    "lower": 0.17070375382900238,
+    "box_px": [
+     61.77661567926407,
+     221.9148799777031,
+     469.79472041130066,
+     242.73578524589539
+    ]
+   },
+   {
+    "text": "Prune late flowering shrubs before new growth",
+    "confidence": 0.9376385851422412,
+    "left": 0.5324248671531677,
+    "upper": 0.1871386021375656,
+    "right": 0.8996717929840088,
+    "lower": 0.17068098485469818,
+    "box_px": [
+     532.4248671531677,
+     221.88528031110764,
+     899.6717929840088,
+     243.2801827788353
+    ]
+   },
+   {
+    "text": "shrubs before new growth appears, and divide",
+    "confidence": 0.9393999155229962,
+    "left": 0.06150263547897339,
+    "upper": 0.20773695409297943,
+    "right": 0.426083505153656,
+    "lower": 0.19206887483596802,
+    "box_px": [
+     61.50263547897339,
+     249.68953728675842,
+     426.083505153656,
+     270.05804032087326
+    ]
+   },
+   {
+    "text": "appears, and divide large clumps of perennials to",
+    "confidence": 0.9389961113139645,
+    "left": 0.5297693014144897,
+    "upper": 0.2079993188381195,
+    "right": 0.9201589226722717,
+    "lower": 0.1919388622045517,
+    "box_px": [
+     529.7693014144897,
+     249.5205208659172,
+     920.1589226722717,
+     270.39911448955536
+    ]
+   },
+   {
+    "text": "large clumps of perennials to create new plants for",
+    "confidence": 0.9395266598873152,
+    "left": 0.060202959924936295,
+    "upper": 0.2283439338207245,
+    "right": 0.4599868357181549,
+    "lower": 0.21233215928077698,
+    "box_px": [
+     60.202959924936295,
+     276.03180706501007,
+     459.9868357181549,
+     296.84711396694183
+    ]
+   },
+   {
+    "text": "create new plants for free. Lawns benefit from a",
+    "confidence": 0.9391816431301997,
+    "left": 0.5304481387138367,
+    "upper": 0.22803668677806854,
+    "right": 0.909892201423645,
+    "lower": 0.2124299705028534,
+    "box_px": [
+     530.4481387138367,
+     276.1589616537094,
+     909.892201423645,
+     296.4476928114891
+    ]
+   },
+   {
+    "text": "free. Lawns benefit from a light rake to remove",
+    "confidence": 0.9386609262922158,
+    "left": 0.06278552860021591,
+    "upper": 0.2490558624267578,
+    "right": 0.43219104409217834,
+    "lower": 0.23321561515331268,
+    "box_px": [
+     62.78552860021591,
+     303.1802996993065,
+     432.19104409217834,
+     323.77262115478516
+    ]
+   },
+   {
+    "text": "toee  rake to remove moss, followed by a feed once",
+    "confidence": 0.8148287925513003,
+    "left": 0.5738657116889954,
+    "upper": 0.24881964921951294,
+    "right": 0.9289852976799011,
+    "lower": 0.2331724464893341,
+    "box_px": [
+     573.8657116889954,
+     303.12418043613434,
+     928.9852976799011,
+     323.4655439853668
+    ]
+   },
+   {
+    "text": "moss, followed by a feed once the soil warms up.",
+    "confidence": 0.9388822482806082,
+    "left": 0.05926084145903587,
+    "upper": 0.27005890011787415,
+    "right": 0.4519204795360565,
+    "lower": 0.2543165981769562,
+    "box_px": [
+     59.26084145903587,
+     330.61157763004303,
+     451.9204795360565,
+     351.0765701532364
+    ]
+   },
+   {
+    "text": "the soil warms up. Watch out for slugs on young",
+    "confidence": 0.9385115514184426,
+    "left": 0.5309187173843384,
+    "upper": 0.2703201472759247,
+    "right": 0.914573073387146,
+    "lower": 0.2543807029724121,
+    "box_px": [
+     530.9187173843384,
+     330.69491386413574,
+     914.573073387146,
+     351.4161914587021
+    ]
+   },
+   {
+    "text": "Watch out for slugs on young shoots after rain, and",
+    "confidence": 0.9392662368263357,
+    "left": 0.06077168509364128,
+    "upper": 0.2905404269695282,
+    "right": 0.4669300317764282,
+    "lower": 0.27507615089416504,
+    "box_px": [
+     60.77168509364128,
+     357.59899616241455,
+     466.9300317764282,
+     377.70255506038666
+    ]
+   },
+   {
+    "text": "shoots after rain, and protect early blossom from",
+    "confidence": 0.9391658416487824,
+    "left": 0.5301928520202637,
+    "upper": 0.290615439414978,
+    "right": 0.9146468639373779,
+    "lower": 0.27462324500083923,
+    "box_px": [
+     530.1928520202637,
+     357.010218501091,
+     914.6468639373779,
+     377.80007123947144
+    ]
+   },
+   {
+    "text": "protect early blossom from frost with a sheet of",
+    "confidence": 0.9383546727282069,
+    "left": 0.06112004071474075,
+    "upper": 0.3109426498413086,
+    "right": 0.43460819125175476,
+    "lower": 0.29515308141708374,
+    "box_px": [
+     61.12004071474075,
+     383.69900584220886,
+     434.60819125175476,
+     404.2254447937012
+    ]
+   },
+   {
+    "text": "frost with a sheet of fleece on cold nights.",
+    "confidence": 0.9368540053640686,
+    "left": 0.5308449864387512,
+    "upper": 0.31114718317985535,
+    "right": 0.8596932291984558,
+    "lower": 0.29486924409866333,
+    "box_px": [
+     530.8449864387512,
+     383.33001732826233,
+     859.6932291984558,
+     404.49133813381195
+    ]
+   },
+   {
+    "text": "fleece on cold nights. Start by clearing old leaves",
+    "confidence": 0.9391194826902166,
+    "left": 0.06097923219203949,
+    "upper": 0.332520991563797,
+    "right": 0.44998598098754883,
+    "lower": 0.31663277745246887,
+    "box_px": [
+     60.97923219203949,
+     411.62261068820953,
+     449.9859809875488,
+     432.2772890329361
+    ]
+   }
+  ],
+  "sentence": [
+   {
+    "text": "Gardening Notes for Early Spring",
+    "confidence": 0.9385240715588711,
+    "left": 0.06045413589477539,
+    "upper": 0.07483524029071514,
+    "right": 0.6922871704101563,
+    "lower": 0.040312447181114784,
+    "box_px": [
+     60.45413589477539,
+     52.40618133544922,
+     692.2871704101562,
+     97.28581237792969
+    ]
+   },
+   {
+    "text": "Start by clearing old leaves from borders and",
+    "confidence": 0.9370065018609112,
+    "left": 0.060417133331298827,
+    "upper": 0.12438439002403846,
+    "right": 0.4175635070800781,
+    "lower": 0.10872508122370793,
+    "box_px": [
+     60.41713333129883,
+     141.3426055908203,
+     417.5635070800781,
+     161.69970703125
+    ]
+   },
+   {
+    "text": "from borders and checking stakes and ties. Sow",
+    "confidence": 0.9373923131647638,
+    "left": 0.5302821044921875,
+    "upper": 0.12456567617563101,
+    "right": 0.9132649536132813,
+    "lower": 0.10895859938401442,
+    "box_px": [
+     530.2821044921875,
+     141.64617919921875,
+     913.2649536132812,
+     161.9353790283203
+    ]
+   },
+   {
+    "text": "checking stakes and ties. Sow tomatoes and",
+    "confidence": 0.9383613949912071,
+    "left": 0.060722286224365235,
+    "upper": 0.14504729050856371,
+    "right": 0.4141954650878906,
+    "lower": 0.12963411771334135,
+    "box_px": [
+     60.722286224365234,
+     168.52435302734375,
+     414.1954650878906,
+     188.56147766113284
+    ]
+   },
+   {
+    "text": "tomatoes and peppers indoors on a sunny",
+    "confidence": 0.9373417296531109,
+    "left": 0.530646728515625,
+    "upper": 0.14560548048753005,
+    "right": 0.8657728881835938,
+    "lower": 0.129473630464994,
+    "box_px": [
+     530.646728515625,
+     168.3157196044922,
+     865.7728881835938,
+     189.28712463378906
+    ]
+   },
+   {
+    "text": "peppers indoors on a sunny windowsill, keeping",
+    "confidence": 0.9391287615466376,
+    "left": 0.06172768402099609,
+    "upper": 0.16667986356295073,
+    "right": 0.4417615661621094,
+    "lower": 0.15028111384465145,
+    "box_px": [
+     61.727684020996094,
+     195.3654479980469,
+     441.7615661621094,
+     216.68382263183594
+    ]
+   },
+   {
+    "text": "windowsill, keeping the compost moist but not wet.",
+    "confidence": 0.9374265929008468,
+    "left": 0.5303763427734375,
+    "upper": 0.1665267826960637,
+    "right": 0.9315279541015625,
+    "lower": 0.15013016920823316,
+    "box_px": [
+     530.3763427734375,
+     195.1692199707031,
+     931.5279541015625,
+     216.4848175048828
+    ]
+   },
+   {
+    "text": "the compost moist but not wet. Prune late flowering",
+    "confidence": 0.9384715922097895,
+    "left": 0.06177661514282227,
+    "upper": 0.18671982985276442,
+    "right": 0.46979470825195313,
+    "lower": 0.1707037588266226,
+    "box_px": [
+     61.776615142822266,
+     221.91488647460938,
+     469.7947082519531,
+     242.73577880859375
+    ]
+   },
+   {
+    "text": "Prune late flowering shrubs before new growth",
+    "confidence": 0.9376385851422412,
+    "left": 0.5324248657226562,
+    "upper": 0.18713860144981972,
+    "right": 0.8996718139648437,
+    "lower": 0.17068098801832932,
+    "box_px": [
+     532.4248657226562,
+     221.88528442382812,
+     899.6718139648438,
+     243.28018188476565
+    ]
+   },
+   {
+    "text": "shrubs before new growth appears, and divide",
+    "confidence": 0.9393999155229962,
+    "left": 0.06150263595581055,
+    "upper": 0.20773695725661057,
+    "right": 0.42608349609375,
+    "lower": 0.19206888052133414,
+    "box_px": [
+     61.50263595581055,
+     249.68954467773438,
+     426.08349609375,
+     270.05804443359375
+    ]
+   },
+   {
+    "text": "appears, and divide large clumps of perennials to",
+    "confidence": 0.9389961113139645,
+    "left": 0.529769287109375,
+    "upper": 0.2079993145282452,
+    "right": 0.920158935546875,
+    "lower": 0.19193886390099157,
+    "box_px": [
+     529.769287109375,
+     249.52052307128903,
+     920.158935546875,
+     270.39910888671875
+    ]
+   },
+   {
+    "text": "large clumps of perennials to create new plants for",
+    "confidence": 0.9395266598873152,
+    "left": 0.060202960968017576,
+    "upper": 0.22834392841045673,
+    "right": 0.45998684692382813,
+    "lower": 0.2123321533203125,
+    "box_px": [
+     60.20296096801758,
+     276.03179931640625,
+     459.9868469238281,
+     296.84710693359375
+    ]
+   },
+   {
+    "text": "create new plants for free. Lawns benefit from a",
+    "confidence": 0.9391816431301997,
+    "left": 0.5304481201171874,
+    "upper": 0.22803668682391826,
+    "right": 0.9098922119140626,
+    "lower": 0.21242997389573318,
+    "box_px": [
+     530.4481201171875,
+     276.1589660644531,
+     909.8922119140625,
+     296.44769287109375
+    ]
+   },
+   {
+    "text": "free. Lawns benefit from a light rake to remove",
+    "confidence": 0.9386609262922158,
+    "left": 0.06278552627563476,
+    "upper": 0.24905585655799278,
+    "right": 0.4321910400390625,
+    "lower": 0.23321561373197117,
+    "box_px": [
+     62.78552627563476,
+     303.1802978515625,
+     432.1910400390625,
+     323.7726135253906
+    ]
+   },
+   {
+    "text": "toee  rake to remove moss, followed by a feed once",
+    "confidence": 0.8148287925513003,
+    "left": 0.57386572265625,
+    "upper": 0.2488196505033053,
+    "right": 0.9289852905273438,
+    "lower": 0.23317244309645432,
+    "box_px": [
+     573.86572265625,
+     303.1241760253906,
+     928.9852905273438,
+     323.4655456542969
+    ]
+   },
+   {
+    "text": "moss, followed by a feed once the soil warms up.",
+    "confidence": 0.9388822482806082,
+    "left": 0.059260841369628905,
+    "upper": 0.2700588989257813,
+    "right": 0.45192047119140627,
+    "lower": 0.2543165940504808,
+    "box_px": [
+     59.260841369628906,
+     330.61157226562506,
+     451.92047119140625,
+     351.0765686035157
+    ]
+   },
+   {
+    "text": "the soil warms up. Watch out for slugs on young",
+    "confidence": 0.9385115514184426,
+    "left": 0.530918701171875,
+    "upper": 0.2703201528695913,
+    "right": 0.9145730590820312,
+    "lower": 0.25438070443960337,
+    "box_px": [
+     530.918701171875,
+     330.6949157714844,
+     914.5730590820312,
+     351.4161987304687
+    ]
+   },
+   {
+    "text": "Watch out for slugs on young shoots after rain, and",
+    "confidence": 0.9392662368263357,
+    "left": 0.06077168655395508,
+    "upper": 0.2905404193584736,
+    "right": 0.46693002319335936,
+    "lower": 0.2750761530949519,
+    "box_px": [
+     60.77168655395508,
+     357.5989990234375,
+     466.9300231933594,
+     377.7025451660156
+    ]
+   },
+   {
+    "text": "shoots after rain, and protect early blossom from",
+    "confidence": 0.9391658416487824,
+    "left": 0.53019287109375,
+    "upper": 0.29061544565054087,
+    "right": 0.9146468505859375,
+    "lower": 0.2746232487605168,
+    "box_px": [
+     530.19287109375,
+     357.0102233886718,
+     914.6468505859375,
+     377.8000793457031
+    ]
+   },
+   {
+    "text": "protect early blossom from frost with a sheet of",
+    "confidence": 0.9383546727282069,
+    "left": 0.06112004089355469,
+    "upper": 0.31094264103816105,
+    "right": 0.4346081848144531,
+    "lower": 0.295153080866887,
+    "box_px": [
+     61.12004089355469,
+     383.6990051269531,
+     434.6081848144531,
+     404.2254333496094
+    ]
+   },
+   {
+    "text": "frost with a sheet of fleece on cold nights.",
+    "confidence": 0.9368540053640686,
+    "left": 0.530844970703125,
+    "upper": 0.31114717923677887,
+    "right": 0.8596932373046875,
+    "lower": 0.2948692439152644,
+    "box_px": [
+     530.844970703125,
+     383.33001708984375,
+     859.6932373046875,
+     404.49133300781256
+    ]
+   },
+   {
+    "text": "fleece on cold nights. Start by clearing old leaves",
+    "confidence": 0.9391194826902166,
+    "left": 0.06097923278808594,
+    "upper": 0.332520986703726,
+    "right": 0.4499859924316406,
+    "lower": 0.31663278432992786,
+    "box_px": [
+     60.97923278808594,
+     411.62261962890625,
+     449.9859924316406,
+     432.2772827148438
+    ]
+   }
+  ],
+  "paragraph": [
+   {
+    "text": "Gardening Notes for Early Spring",
+    "confidence": 0.9385240715588711,
+    "left": 0.06045413589477539,
+    "upper": 0.07483524029071514,
+    "right": 0.6922871704101563,
+    "lower": 0.040312447181114784,
+    "box_px": [
+     60.45413589477539,
+     52.40618133544922,
+     692.2871704101562,
+     97.28581237792969
+    ]
+   },
+   {
+    "text": "Start by clearing old leaves from borders and checking stakes and ties. Sow tomatoes and peppers indoors on a sunny windowsill, keeping the compost moist but not wet. Prune late flowering shrubs before new growth appears, and divide large clumps of perennials to create new plants for free. Lawns benefit from a light rake to remove moss, followed by a feed once the soil warms up. Watch out for slugs on young shoots after rain, and protect early blossom from frost with a sheet of fleece on cold nights. Start by clearing old leaves",
+    "confidence": 0.9387434902578583,
+    "left": 0.059260841369628905,
+    "upper": 0.332520986703726,
+    "right": 0.46979470825195313,
+    "lower": 0.10872508122370793,
+    "box_px": [
+     59.260841369628906,
+     141.3426055908203,
+     469.7947082519531,
+     432.2772827148438
+    ]
+   },
+   {
+    "text": "from borders and checking stakes and ties. Sow tomatoes and peppers indoors on a sunny windowsill, keeping the compost moist but not wet. Prune late flowering shrubs before new growth appears, and divide large clumps of perennials to create new plants for free. Lawns benefit from a toee  rake to remove moss, followed by a feed once the soil warms up. Watch out for slugs on young shoots after rain, and protect early blossom from frost with a sheet of fleece on cold nights.",
+    "confidence": 0.9257337166287721,
+    "left": 0.529769287109375,
+    "upper": 0.31114717923677887,
+    "right": 0.9315279541015625,
+    "lower": 0.10895859938401442,
+    "box_px": [
+     529.769287109375,
+     141.64617919921875,
+     931.5279541015625,
+     404.49133300781256
+    ]
+   }
+  ]
+ }
+}

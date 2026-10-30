@@ -1,0 +1,15 @@
+{
+ "image": "tests/images/blank.png",
+ "variant": "english",
+ "original_hw": [
+  480,
+  640
+ ],
+ "padded_length": 640,
+ "num_regions": 0,
+ "predictions": {
+  "word": [],
+  "sentence": [],
+  "paragraph": []
+ }
+}

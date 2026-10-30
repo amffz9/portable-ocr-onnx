@@ -1,0 +1,188 @@
+{
+ "compact_spec": {
+  "det_conf": "__s1x2x2",
+  "det_features": "__s1x8x8x8",
+  "det_input": "__s1x1x16x16",
+  "det_rboxes": "__s1x4x4",
+  "nms_confidence": "full",
+  "nms_quads": "full",
+  "rec_features": "__s1x4x16",
+  "rec_grid": "__s1x1x4",
+  "rec_ids": "full",
+  "rec_input": "__s1x16x1x4",
+  "rec_logit_max": "full",
+  "rec_logsumexp": "full",
+  "rec_probs": "full",
+  "region_counts": "full",
+  "rel_grid": "full",
+  "rel_input": "__s1x4",
+  "rel_line_var": "full",
+  "rel_lines": "full",
+  "rel_words": "full"
+ },
+ "environment": {
+  "device": "cpu",
+  "machine": "x86_64",
+  "numpy": "2.5.4",
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "precision": "fp32",
+  "python": "3.12.3",
+  "threads": 4,
+  "torch": "2.11.0+cpu"
+ },
+ "merge_levels": [
+  "word",
+  "sentence",
+  "paragraph"
+ ],
+ "variants": {
+  "english": {
+   "blank": {
+    "image": "tests/images/blank.png",
+    "num_paragraphs": 0,
+    "num_regions": 0,
+    "seconds": 6.48
+   },
+   "dense": {
+    "image": "tests/images/dense.png",
+    "num_paragraphs": 55,
+    "num_regions": 362,
+    "seconds": 8.34
+   },
+   "form": {
+    "image": "tests/images/form.png",
+    "num_paragraphs": 20,
+    "num_regions": 38,
+    "seconds": 7.05
+   },
+   "letter": {
+    "image": "tests/images/letter.png",
+    "num_paragraphs": 7,
+    "num_regions": 125,
+    "seconds": 7.18
+   },
+   "low_contrast": {
+    "image": "tests/images/low_contrast.png",
+    "num_paragraphs": 1,
+    "num_regions": 62,
+    "seconds": 7.17
+   },
+   "multilingual": {
+    "image": "tests/images/multilingual.png",
+    "num_paragraphs": 6,
+    "num_regions": 30,
+    "seconds": 8.16
+   },
+   "receipt": {
+    "image": "tests/images/receipt.png",
+    "num_paragraphs": 31,
+    "num_regions": 53,
+    "seconds": 7.21
+   },
+   "rotated": {
+    "image": "tests/images/rotated.png",
+    "num_paragraphs": 4,
+    "num_regions": 12,
+    "seconds": 7.05
+   },
+   "sample": {
+    "image": "weights/ocr-example-input-1.png",
+    "num_paragraphs": 24,
+    "num_regions": 54,
+    "seconds": 7.31
+   },
+   "slide": {
+    "image": "tests/images/slide.png",
+    "num_paragraphs": 5,
+    "num_regions": 27,
+    "seconds": 7.12
+   },
+   "sparse_small": {
+    "image": "tests/images/sparse_small.png",
+    "num_paragraphs": 2,
+    "num_regions": 8,
+    "seconds": 7.41
+   },
+   "two_column": {
+    "image": "tests/images/two_column.png",
+    "num_paragraphs": 3,
+    "num_regions": 181,
+    "seconds": 8.24
+   }
+  },
+  "multilingual": {
+   "blank": {
+    "image": "tests/images/blank.png",
+    "num_paragraphs": 1,
+    "num_regions": 2,
+    "seconds": 19.21
+   },
+   "dense": {
+    "image": "tests/images/dense.png",
+    "num_paragraphs": 54,
+    "num_regions": 65,
+    "seconds": 20.13
+   },
+   "form": {
+    "image": "tests/images/form.png",
+    "num_paragraphs": 20,
+    "num_regions": 20,
+    "seconds": 19.75
+   },
+   "letter": {
+    "image": "tests/images/letter.png",
+    "num_paragraphs": 7,
+    "num_regions": 13,
+    "seconds": 32.93
+   },
+   "low_contrast": {
+    "image": "tests/images/low_contrast.png",
+    "num_paragraphs": 2,
+    "num_regions": 7,
+    "seconds": 21.44
+   },
+   "multilingual": {
+    "image": "tests/images/multilingual.png",
+    "num_paragraphs": 7,
+    "num_regions": 8,
+    "seconds": 28.35
+   },
+   "receipt": {
+    "image": "tests/images/receipt.png",
+    "num_paragraphs": 31,
+    "num_regions": 31,
+    "seconds": 20.7
+   },
+   "rotated": {
+    "image": "tests/images/rotated.png",
+    "num_paragraphs": 4,
+    "num_regions": 4,
+    "seconds": 36.62
+   },
+   "sample": {
+    "image": "weights/ocr-example-input-1.png",
+    "num_paragraphs": 27,
+    "num_regions": 27,
+    "seconds": 19.25
+   },
+   "slide": {
+    "image": "tests/images/slide.png",
+    "num_paragraphs": 2,
+    "num_regions": 5,
+    "seconds": 37.54
+   },
+   "sparse_small": {
+    "image": "tests/images/sparse_small.png",
+    "num_paragraphs": 1,
+    "num_regions": 3,
+    "seconds": 92.66
+   },
+   "two_column": {
+    "image": "tests/images/two_column.png",
+    "num_paragraphs": 3,
+    "num_regions": 22,
+    "seconds": 78.02
+   }
+  }
+ }
+}
