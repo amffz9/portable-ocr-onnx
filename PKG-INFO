@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: nemotron-ocr
+Version: 2.0.2
+Summary: Nemoton OCR
+Project-URL: Homepage, https://nvidia.com/
+Author: NVIDIA Nemotron
+License-Expression: Apache-2.0
+License-File: LICENSE
+Classifier: License :: OSI Approved :: Apache Software License
+Requires-Python: <3.14,>=3.11
+Requires-Dist: huggingface-hub>=0.20.0
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: pillow>=12.0.0
+Requires-Dist: shapely<3,>=2.1.2
+Requires-Dist: torchvision~=0.26.0
+Requires-Dist: torch~=2.11.0
